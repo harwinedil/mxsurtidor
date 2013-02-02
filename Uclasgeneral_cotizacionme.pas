@@ -1,0 +1,436 @@
+UNIT Uclasgeneral_cotizacionme;
+
+{
+GENERADO AUTOMATICAMENTE POR "Generador v.2012"
+AUTOR              : HARWIN EDIL PEREZ SALINAS   [harwinedil@gmail.com]
+DESCRIPCION        : Clase para interactuar con la Tabla : general_cotizacionme
+FECHA CREACION     : 13/12/2012 Hora: 18:24:46
+ULTIMA MODIFICACION: 13/12/2012 Hora: 18:24:46
+MODIFICADO POR     : HARWIN EDIL PEREZ SALINAS
+OBSERVACIONES      :
+
+}
+
+INTERFACE
+
+USES
+  sysUtils,uLkJSON,AstaDrv2,AstaClientDataset,AstaParamList,UBaseObject,Uconstantes,
+  forms, classes,UGralUtilidades,DBCtrls,SUIDBCtrls;
+
+
+TYPE
+	Pgeneral_cotizacionme = ^Tgeneral_cotizacionme;
+	Tgeneral_cotizacionme = CLASS(TBaseObject)
+	PRIVATE
+		afecha	: TDateTime; 
+		amn  	: Currency; 
+		amnmin	: Currency; 
+		amnmax	: Currency; 
+		aufv 	: Currency;
+	PUBLIC
+		CONSTRUCTOR     Create;		OVERLOAD;
+		CONSTRUCTOR     Create(pfecha:TDateTime; pmn:Currency; pmnmin:Currency; pmnmax:Currency; pufv:Currency); OVERLOAD;
+		CONSTRUCTOR     Create(const pObjeto:Tgeneral_cotizacionme);OVERLOAD;
+		DESTRUCTOR      Destroy;	OVERRIDE;
+		PROCEDURE       init;		OVERRIDE;
+		PROCEDURE       setAtributos(pfecha:TDateTime; pmn:Currency; pmnmin:Currency; pmnmax:Currency; pufv:Currency);		
+
+		PROCEDURE       fromJson(o:TlkJSONobject); OVERRIDE;
+		PROCEDURE       fromJsonString(s:string);  OVERRIDE;
+		FUNCTION        toJsonString : string; OVERRIDE;
+		FUNCTION        sqlGetField(field:string) : string; OVERRIDE;
+		FUNCTION        sqlGetKeyValue(key,value : string) : string; OVERRIDE;
+		FUNCTION        sqlGetAll : string; OVERRIDE;
+		PROCEDURE       QBE( columns,where :string ; ClientDS: TAstaClientDataSet; params:TAstaParamList=NIL); OVERLOAD;OVERRIDE;
+		PROCEDURE       filtrar(cds:TAstaClientDataSet; where:string = ''; params:TAstaParamList=NIL); OVERRIDE;
+		PROCEDURE       QBE(ClientDS: TAstaClientDataSet; where:string = '';params:TAstaParamList=NIL);  OVERLOAD;OVERRIDE;
+
+		FUNCTION        save(ClientDS: TAstaClientDataSet; transacction: byte) : byte; OVERRIDE;
+		FUNCTION        exist(ClientDS: TAstaClientDataSet) : boolean;OVERRIDE;
+		PROCEDURE       fromClientDataSet(ClientDS: TAstaClientDataSet);OVERRIDE;
+		PROCEDURE       fromGUI(form:TForm ); OVERRIDE;
+		PROCEDURE       toGUI(form:TForm ); OVERRIDE;
+		PROCEDURE       nextID(ClientDS: TAstaClientDataSet); OVERRIDE;
+    procedure       addToday(ClientDS: TAstaClientDataSet);
+
+		PROCEDURE   	setfecha(pfecha:TDateTime);
+		PROCEDURE   	setmn(pmn:Currency);
+		PROCEDURE   	setmnmin(pmnmin:Currency);
+		PROCEDURE   	setmnmax(pmnmax:Currency);
+		PROCEDURE   	setufv(pufv:Currency);
+
+		FUNCTION    	getfecha 	:TDateTime;
+		FUNCTION    	getmn    	:Currency;
+		FUNCTION    	getmnmin 	:Currency;
+		FUNCTION    	getmnmax 	:Currency;
+		FUNCTION    	getufv   	:Currency;
+
+		PROPERTY    	fecha  : TDateTime 	read getfecha 	write setfecha ;
+		PROPERTY    	mn     : Currency  	read getmn    	write setmn    ;
+		PROPERTY    	mnmin  : Currency  	read getmnmin 	write setmnmin ;
+		PROPERTY    	mnmax  : Currency  	read getmnmax 	write setmnmax ;
+		PROPERTY    	ufv    : Currency  	read getufv   	write setufv   ;
+
+		
+	END;
+
+IMPLEMENTATION
+
+uses Math;
+{Tgeneral_cotizacionme}
+
+CONSTRUCTOR Tgeneral_cotizacionme.Create;
+BEGIN
+	afecha:= 0;
+	amn   := 0;
+	amnmin:= 0;
+	amnmax:= 0;
+	aufv  := 0;	
+	autocommit := true;												
+END;
+
+CONSTRUCTOR Tgeneral_cotizacionme.Create(pfecha:TDateTime; pmn:Currency; pmnmin:Currency; pmnmax:Currency; pufv:Currency);
+BEGIN
+	afecha:= pfecha;
+	amn   := pmn   ;
+	amnmin:= pmnmin;
+	amnmax:= pmnmax;
+	aufv  := pufv  ;
+	autocommit := true;
+END;
+
+CONSTRUCTOR Tgeneral_cotizacionme.Create(const pObjeto:Tgeneral_cotizacionme);
+BEGIN
+	afecha:= pObjeto.fecha;
+	amn   := pObjeto.mn   ;
+	amnmin:= pObjeto.mnmin;
+	amnmax:= pObjeto.mnmax;
+	aufv  := pObjeto.ufv  ;
+	autocommit := pObjeto.autocommit;
+END;
+
+DESTRUCTOR Tgeneral_cotizacionme.Destroy;
+BEGIN
+	
+	inherited Destroy;
+END;
+
+PROCEDURE Tgeneral_cotizacionme.init;
+BEGIN
+	afecha:= 0;
+	amn   := 0;
+	amnmin:= 0;
+	amnmax:= 0;
+	aufv  := 0;														
+END;
+
+PROCEDURE Tgeneral_cotizacionme.fromJsonString(s:string);
+BEGIN
+	self.fromJson(TlkJSON.ParseText(s) as TlkJSONobject);
+END;
+
+PROCEDURE Tgeneral_cotizacionme.fromJson(o:TlkJSONobject);
+BEGIN
+	fecha := (o.Field['fecha'] as TlkJSONnumber).Value;
+	mn    := (o.Field['mn'] as TlkJSONnumber).Value;
+	mnmin := (o.Field['mnmin'] as TlkJSONnumber).Value;
+	mnmax := (o.Field['mnmax'] as TlkJSONnumber).Value;
+	ufv   := (o.Field['ufv'] as TlkJSONnumber).Value;
+END;
+
+FUNCTION Tgeneral_cotizacionme.toJsonString : string;
+var  json : TlkJSONobject;
+BEGIN
+	json := TlkJSONobject.Create();
+	TRY	
+		json.Add('fecha',TlkJSONNumber.Generate(fecha));
+		json.Add('mn',TlkJSONNumber.Generate(mn));
+		json.Add('mnmin',TlkJSONNumber.Generate(mnmin));
+		json.Add('mnmax',TlkJSONNumber.Generate(mnmax));
+		json.Add('ufv',TlkJSONNumber.Generate(ufv));
+	FINALLY
+		RESULT := TlkJSON.GenerateText(json);
+		FreeAndNIL(json);
+	END;
+END;
+
+
+PROCEDURE Tgeneral_cotizacionme.setAtributos(pfecha:TDateTime; pmn:Currency; pmnmin:Currency; pmnmax:Currency; pufv:Currency);		
+BEGIN
+	afecha:= pfecha;
+	amn   := pmn   ;
+	amnmin:= pmnmin;
+	amnmax:= pmnmax;
+	aufv  := pufv  ;	
+END;
+
+FUNCTION Tgeneral_cotizacionme.sqlGetField(field:string) : string;
+BEGIN
+	RESULT := 'select '+field+' from general_cotizacionme order by '+field;
+END;
+
+FUNCTION Tgeneral_cotizacionme.sqlGetKeyValue(key,value : string) : string;
+BEGIN
+	RESULT := 'select '+key+' as key,'+value+'as value from general_cotizacionme order by '+value;
+END;
+
+FUNCTION  Tgeneral_cotizacionme.sqlGetAll : string;
+BEGIN
+	RESULT := 'select Fecha,MN, MNmin, MNMAX, UFV from general_cotizacionme';
+END;
+
+PROCEDURE Tgeneral_cotizacionme.filtrar(cds:TAstaClientDataSet; where:string = ''; params:TAstaParamList=NIL);
+var  	y : string;
+	i : word;
+BEGIN
+	y := ' where ';
+	IF SELF.fecha<>0 THEN
+	BEGIN
+		cds.sql.add( y +'fecha= :pfecha');
+		cds.ParamByName('pfecha').asDateTime	:= SELF.fecha;
+		y := ' and ';
+	END;
+{
+	IF SELF.mn<>0 THEN
+	BEGIN
+		cds.sql.add( y +'mn= :pmn');
+		cds.ParamByName('pmn').asCurrency	:= SELF.mn;
+		y := ' and ';
+	END;
+
+	IF SELF.mnmin<>0 THEN
+	BEGIN
+		cds.sql.add( y +'mnmin= :pmnmin');
+		cds.ParamByName('pmnmin').asCurrency	:= SELF.mnmin;
+		y := ' and ';
+	END;
+
+	IF SELF.mnmax<>0 THEN
+	BEGIN
+		cds.sql.add( y +'mnmax= :pmnmax');
+		cds.ParamByName('pmnmax').asCurrency	:= SELF.mnmax;
+		y := ' and ';
+	END;
+
+	IF SELF.ufv<>0 THEN
+	BEGIN
+		cds.sql.add( y +'ufv= :pufv');
+		cds.ParamByName('pufv').asCurrency	:= SELF.ufv;
+		y := ' and ';
+	END;
+ }
+
+	if where <> '' then
+	begin
+	cds.sql.add(where);
+	for i:=0 to params.count-1 do
+		cds.params.AddOneParamItem(params.items[i]);
+	end;
+END;
+
+
+PROCEDURE Tgeneral_cotizacionme.QBE(ClientDS: TAstaClientDataSet; where:string = ''; params:TAstaParamList=NIL);
+BEGIN
+	initDataSet(ClientDS);
+	clientDS.sql.add(sqlGetAll);
+	filtrar(ClientDS,where,params);
+  ClientDS.SQL.Add('order by fecha');
+	clientDS.prepare;
+	clientDS.Open;
+END;
+
+PROCEDURE Tgeneral_cotizacionme.QBE(columns,where :string ; ClientDS: TAstaClientDataSet; params:TAstaParamList=NIL);
+BEGIN
+	initDataSet(ClientDS);
+	clientDS.sql.add('select '+columns+ ' from general_cotizacionme');
+	ClientDS.SQL.Add('where '+where);
+
+	if params <> NIL then
+		ClientDS.Params := params;
+
+	clientDS.prepare;
+	clientDS.Open;
+END;
+
+function Tgeneral_cotizacionme.exist(ClientDS: TAstaClientDataSet): boolean;
+begin
+	initDataSet(ClientDS);
+	ClientDS.SQL.Add('select fecha from general_cotizacionme where FECHA=:pID');
+	ClientDS.ParamByName('pID').AsDateTime := utils.toFechaRangoIni(SELF.fecha);
+	ClientDS.Open;
+
+	Result := not ClientDS.IsEmpty;
+end;
+
+procedure Tgeneral_cotizacionme.fromClientDataSet(ClientDS: TAstaClientDataSet);
+begin
+	inherited;
+	IF NOT ClientDS.Active THEN EXIT;
+	SELF.fecha := clientDS.FieldByName('fecha').AsDateTime;
+	SELF.mn    := clientDS.FieldByName('mn').AsCurrency;
+	SELF.mnmin := clientDS.FieldByName('mnmin').AsCurrency;
+	SELF.mnmax := clientDS.FieldByName('mnmax').AsCurrency;
+	SELF.ufv   := clientDS.FieldByName('ufv').AsCurrency;
+end;
+
+
+procedure Tgeneral_cotizacionme.fromGUI(form: TForm);
+begin
+	with form do
+	begin
+		SELF.fecha:= StrToDate(utils.formObtenerPropiedad(FindComponent('cfecha'),'Text'));
+		SELF.mn   := StrToCurr(utils.formObtenerPropiedad(FindComponent('cmn'),'Text'));
+		SELF.mnmin:= StrToCurr(utils.formObtenerPropiedad(FindComponent('cmnmin'),'Text'));
+		SELF.mnmax:= StrToCurr(utils.formObtenerPropiedad(FindComponent('cmnmax'),'Text'));
+		SELF.ufv  := StrToCurr(utils.formObtenerPropiedad(FindComponent('cmnUFV'),'Text'));
+	end;
+end;
+
+procedure Tgeneral_cotizacionme.toGUI(form: TForm);
+begin
+	inherited;
+	with form do
+	begin
+	utils.formAsignaPropiedad(FindComponent('cfecha'),'Text', DateToStr(SELF.fecha));
+	utils.formAsignaPropiedad(FindComponent('cmn'),'Text', CurrToStr(SELF.mn));
+	utils.formAsignaPropiedad(FindComponent('cmnmin'),'Text', CurrToStr(SELF.mnmin));
+	utils.formAsignaPropiedad(FindComponent('cmnmax'),'Text', CurrToStr(SELF.mnmax));
+	utils.formAsignaPropiedad(FindComponent('cufv'),'Text', CurrToStr(SELF.ufv));
+	end;
+end;
+
+function Tgeneral_cotizacionme.save(ClientDS: TAstaClientDataSet;transacction: byte): byte;
+//var   date : TDateTime;
+begin
+	RESULT := cFalse;
+//	date := self.getFechaHoraServer(ClientDS);
+	initDataSet(ClientDS);
+
+//	if autocommit then
+//		ClientDS.AstaClientSocket.StartTransaction;
+   TRY
+	case transacction of
+
+	1 : begin         //update
+		ClientDS.SQL.Add('UPDATE general_cotizacionme SET '+
+				' mn = :pmn'+
+				',mnmin = :pmnmin'+
+				',mnmax = :pmnmax'+
+				',ufv = :pufv'+
+				' WHERE fecha = :pfecha'
+		);		
+		ClientDS.ParamByName('pfecha').asDatetime      := utils.toFechaRangoIni(SELF.fecha);
+		ClientDS.ParamByName('pmn').asCurrency         := SELF.mn;
+		ClientDS.ParamByName('pmnmin').asCurrency      := SELF.mnmin;
+		ClientDS.ParamByName('pmnmax').asCurrency      := SELF.mnmax;
+		ClientDS.ParamByName('pufv').asCurrency        := SELF.ufv;
+	end;
+
+	0: begin	//insert
+//		SELF.nextID(clientDS);
+
+//		initDataSet(ClientDS);
+		ClientDS.SQL.Add('INSERT INTO general_cotizacionme (fecha,mn,mnmin,mnmax,ufv)');
+		ClientDS.SQL.Add(' VALUES ');
+		ClientDS.SQL.Add('(:pfecha,:pmn,:pmnmin,:pmnmax,:pufv)');
+		ClientDS.ParamByName('pfecha').asDatetime      := utils.toFechaRangoIni(SELF.fecha);
+		ClientDS.ParamByName('pmn').asCurrency         := SELF.mn;
+		ClientDS.ParamByName('pmnmin').asCurrency      := SELF.mnmin;
+		ClientDS.ParamByName('pmnmax').asCurrency      := SELF.mnmax;
+		ClientDS.ParamByName('pufv').asCurrency        := SELF.ufv;
+	end;
+
+	2: begin //delete
+		ClientDS.SQL.Add('delete from general_cotizacionme where fecha =:pid');
+		ClientDS.ParamByName('pID').AsDateTime := utils.toFechaRangoIni(SELF.fecha);
+	end;
+
+  end; 	
+//	if autocommit then
+//		ClientDS.AstaClientSocket.StartTransaction;
+	Result := cTrue;
+
+   FINALLY
+	if autocommit then
+		ClientDS.ExecSQLTransaction
+	else
+		ClientDS.ExecSQL;
+   END;
+end;
+
+procedure Tgeneral_cotizacionme.nextID(ClientDS: TAstaClientDataSet);
+begin
+end;
+
+
+PROCEDURE Tgeneral_cotizacionme.setfecha(pfecha:TDateTime);
+BEGIN
+	afecha:= pfecha;
+END;
+
+PROCEDURE Tgeneral_cotizacionme.setmn(pmn:Currency);
+BEGIN
+	amn:= pmn;
+END;
+
+PROCEDURE Tgeneral_cotizacionme.setmnmin(pmnmin:Currency);
+BEGIN
+	amnmin:= pmnmin;
+END;
+
+PROCEDURE Tgeneral_cotizacionme.setmnmax(pmnmax:Currency);
+BEGIN
+	amnmax:= pmnmax;
+END;
+
+PROCEDURE Tgeneral_cotizacionme.setufv(pufv:Currency);
+BEGIN
+	aufv:= pufv;
+END;
+
+
+FUNCTION Tgeneral_cotizacionme.getfecha	:TDateTime;
+BEGIN
+	RESULT := afecha;
+END;
+
+FUNCTION Tgeneral_cotizacionme.getmn	:Currency;
+BEGIN
+	RESULT := amn;
+END;
+
+FUNCTION Tgeneral_cotizacionme.getmnmin	:Currency;
+BEGIN
+	RESULT := amnmin;
+END;
+
+FUNCTION Tgeneral_cotizacionme.getmnmax	:Currency;
+BEGIN
+	RESULT := amnmax;
+END;
+
+FUNCTION Tgeneral_cotizacionme.getufv	:Currency;
+BEGIN
+	RESULT := aufv;
+END;
+
+
+procedure Tgeneral_cotizacionme.addToday(ClientDS: TAstaClientDataSet);
+var date : TDateTime;
+begin
+     date := self.getFechaHoraServer(ClientDS);
+     self.fecha := utils.toFechaRangoIni(date);
+
+     if not self.exist(ClientDS) then
+     begin
+          initDataSet(ClientDS);
+          ClientDS.SQL.Add('insert into general_cotizacionme(fecha,mn,mnmin,mnmax)');
+          ClientDS.SQL.Add('select :fecha,mn,mnmin,mnmax from general_cotizacionme');
+          ClientDS.SQL.Add('where fecha = (select max(fecha) from general_cotizacionme)');
+          ClientDS.ParamByName('fecha').AsDate := self.fecha;
+          ClientDS.ExecSQLTransaction;
+     end;
+end;
+
+END.
+

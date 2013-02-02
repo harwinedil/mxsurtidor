@@ -1,0 +1,807 @@
+UNIT Uclassecurity_mxuser;
+
+{
+GENERADO AUTOMATICAMENTE POR "Generador v.2012"
+AUTOR              : HARWIN EDIL PEREZ SALINAS   [harwinedil@gmail.com]
+DESCRIPCION        : Clase para interactuar con la Tabla : security_mxuser
+FECHA CREACION     : 14/12/2012 Hora: 0:06:51
+ULTIMA MODIFICACION: 14/12/2012 Hora: 0:06:51
+MODIFICADO POR     : HARWIN EDIL PEREZ SALINAS
+OBSERVACIONES      :
+
+}
+
+INTERFACE
+
+USES
+  sysUtils,uLkJSON,AstaDrv2,AstaClientDataset,AstaParamList,UBaseObject,Uconstantes,
+  forms, classes,UGralUtilidades,DBCtrls,SUIDBCtrls,Uclassecurity_mxuser_roles,
+  Uclassecurity_company;
+
+
+TYPE
+	Psecurity_mxuser = ^Tsecurity_mxuser;
+	Tsecurity_mxuser = CLASS(TBaseObject)
+	PRIVATE
+		aid        	: Integer; 
+		asub       	: Integer; 
+		alogin     	: String[32];
+		apassw     	: String[32];
+		acompany_id	: Integer;
+		acontact_id	: String[16];
+		adata0     	: String;
+		alog       	: String;
+		acreated   	: TDateTime;
+		aucreated  	: Integer;
+		aupdated   	: TDateTime; 
+		auupdated  	: Integer; 
+		aconcurrency	: Integer; 
+		astatus    	: String;
+	PUBLIC
+     changeRol: Boolean;   
+     roles : TList;
+		CONSTRUCTOR     Create;		OVERLOAD;
+		CONSTRUCTOR     Create(pid:Integer; psub:Integer; plogin:String; ppassw:String; pcompany_id:Integer; pcontact_id:String; pdata0:String; plog:String; pcreated:TDateTime; pucreated:Integer; pupdated:TDateTime; puupdated:Integer; pconcurrency:Integer; pstatus:String); OVERLOAD;
+		CONSTRUCTOR     Create(const pObjeto:Tsecurity_mxuser);OVERLOAD;
+		DESTRUCTOR      Destroy;	OVERRIDE;
+		PROCEDURE       init;		OVERRIDE;
+		PROCEDURE       setAtributos(pid:Integer; psub:Integer; plogin:String; ppassw:String; pcompany_id:Integer; pcontact_id:String; pdata0:String; plog:String; pcreated:TDateTime; pucreated:Integer; pupdated:TDateTime; puupdated:Integer; pconcurrency:Integer; pstatus:String);		
+
+		PROCEDURE       fromJson(o:TlkJSONobject); OVERRIDE;
+		PROCEDURE       fromJsonString(s:string);  OVERRIDE;
+		FUNCTION        toJsonString : string; OVERRIDE;
+		FUNCTION        sqlGetField(field:string) : string; OVERRIDE;
+		FUNCTION        sqlGetKeyValue(key,value : string) : string; OVERRIDE;
+		FUNCTION        sqlGetAll : string; OVERRIDE;
+		PROCEDURE       QBE( columns,where :string ; ClientDS: TAstaClientDataSet; params:TAstaParamList=NIL); OVERLOAD;OVERRIDE;
+		PROCEDURE       filtrar(cds:TAstaClientDataSet; where:string = ''; params:TAstaParamList=NIL); OVERRIDE;
+		PROCEDURE       QBE(ClientDS: TAstaClientDataSet; where:string = '';params:TAstaParamList=NIL);  OVERLOAD;OVERRIDE;
+
+		FUNCTION        save(ClientDS: TAstaClientDataSet; transacction: byte) : byte; OVERRIDE;
+		FUNCTION        exist(ClientDS: TAstaClientDataSet) : boolean;OVERRIDE;
+		PROCEDURE       fromClientDataSet(ClientDS: TAstaClientDataSet);OVERRIDE;
+		PROCEDURE       fromGUI(form:TForm ); OVERRIDE;
+		PROCEDURE       toGUI(form:TForm ); OVERRIDE;
+		PROCEDURE       nextID(ClientDS: TAstaClientDataSet); OVERRIDE;
+
+		PROCEDURE   	setid(pid:Integer);
+		PROCEDURE   	setsub(psub:Integer);
+		PROCEDURE   	setlogin(plogin:String);
+		PROCEDURE   	setpassw(ppassw:String);
+		PROCEDURE   	setcompany_id(pcompany_id:Integer);
+		PROCEDURE   	setcontact_id(pcontact_id:String);
+		PROCEDURE   	setdata0(pdata0:String);
+		PROCEDURE   	setlog(plog:String);
+		PROCEDURE   	setcreated(pcreated:TDateTime);
+		PROCEDURE   	setucreated(pucreated:Integer);
+		PROCEDURE   	setupdated(pupdated:TDateTime);
+		PROCEDURE   	setuupdated(puupdated:Integer);
+		PROCEDURE   	setconcurrency(pconcurrency:Integer);
+		PROCEDURE   	setstatus(pstatus:String);
+
+		FUNCTION    	getid          	:Integer;
+		FUNCTION    	getsub         	:Integer;
+		FUNCTION    	getlogin       	:String;
+		FUNCTION    	getpassw       	:string;
+		FUNCTION    	getcompany_id  	:Integer;
+		FUNCTION    	getcontact_id  	:String;
+		FUNCTION    	getdata0       	:String;
+		FUNCTION    	getlog         	:String;
+		FUNCTION    	getcreated     	:TDateTime;
+		FUNCTION    	getucreated    	:Integer;
+		FUNCTION    	getupdated     	:TDateTime;
+		FUNCTION    	getuupdated    	:Integer;
+		FUNCTION    	getconcurrency 	:Integer;
+		FUNCTION    	getstatus      	:String;
+
+		PROPERTY    	id           : Integer   	read getid          	write setid          ;
+		PROPERTY    	sub          : Integer   	read getsub         	write setsub         ;
+		PROPERTY    	login        : String    	read getlogin       	write setlogin       ;
+		PROPERTY    	passw        : string   	read getpassw       	write setpassw       ;
+		PROPERTY    	company_id   : Integer   	read getcompany_id  	write setcompany_id  ;
+		PROPERTY    	contact_id   : String    	read getcontact_id  	write setcontact_id  ;
+		PROPERTY    	data0        : String    	read getdata0       	write setdata0       ;
+		PROPERTY    	log          : String    	read getlog         	write setlog         ;
+		PROPERTY    	created      : TDateTime 	read getcreated     	write setcreated     ;
+		PROPERTY    	ucreated     : Integer   	read getucreated    	write setucreated    ;
+		PROPERTY    	updated      : TDateTime 	read getupdated     	write setupdated     ;
+		PROPERTY    	uupdated     : Integer   	read getuupdated    	write setuupdated    ;
+		PROPERTY    	concurrency  : Integer   	read getconcurrency 	write setconcurrency ;
+		PROPERTY    	status       : String    	read getstatus      	write setstatus      ;
+
+		
+	END;
+var  GUser : Tsecurity_mxuser;
+IMPLEMENTATION
+{Tsecurity_mxuser}
+
+CONSTRUCTOR Tsecurity_mxuser.Create;
+BEGIN
+	aid         := 0;
+	asub        := 0;
+	alogin      := '';
+	apassw      := '';
+	acompany_id := 0;
+	acontact_id := '';
+	adata0      := '';
+	alog        := '';
+	acreated    := 0;
+	aucreated   := 0;
+	aupdated    := 0;
+	auupdated   := 0;
+	aconcurrency:= 0;
+	astatus     := '';
+	autocommit := true;
+  roles      := TList.Create;
+  changeRol  := false;
+END;
+
+CONSTRUCTOR Tsecurity_mxuser.Create(pid:Integer; psub:Integer; plogin:String; ppassw:string; pcompany_id:Integer; pcontact_id:String; pdata0:String; plog:String; pcreated:TDateTime; pucreated:Integer; pupdated:TDateTime; puupdated:Integer; pconcurrency:Integer; pstatus:String);
+BEGIN
+	aid         := pid         ;
+	asub        := psub        ;
+	alogin      := plogin      ;
+	apassw      := ppassw      ;
+	acompany_id := pcompany_id ;
+	acontact_id := pcontact_id ;
+	adata0      := pdata0      ;
+	alog        := plog        ;
+	acreated    := pcreated    ;
+	aucreated   := pucreated   ;
+	aupdated    := pupdated    ;
+	auupdated   := puupdated   ;
+	aconcurrency:= pconcurrency;
+	astatus     := pstatus     ;
+	autocommit := true;
+  roles      := TList.Create;
+  changeRol  := false;
+END;
+
+CONSTRUCTOR Tsecurity_mxuser.Create(const pObjeto:Tsecurity_mxuser);
+BEGIN
+	aid         := pObjeto.id         ;
+	asub        := pObjeto.sub        ;
+	alogin      := pObjeto.login      ;
+	apassw      := pObjeto.passw      ;
+	acompany_id := pObjeto.company_id ;
+	acontact_id := pObjeto.contact_id ;
+	adata0      := pObjeto.data0      ;
+	alog        := pObjeto.log        ;
+	acreated    := pObjeto.created    ;
+	aucreated   := pObjeto.ucreated   ;
+	aupdated    := pObjeto.updated    ;
+	auupdated   := pObjeto.uupdated   ;
+	aconcurrency:= pObjeto.concurrency;
+	astatus     := pObjeto.status     ;
+	autocommit := pObjeto.autocommit;
+  roles      := TList.Create;
+  changeRol  := false;
+END;
+
+DESTRUCTOR Tsecurity_mxuser.Destroy;
+BEGIN
+  utils.LiberarLista(roles);
+	inherited Destroy;
+END;
+
+PROCEDURE Tsecurity_mxuser.init;
+BEGIN
+	aid         := 0;
+	asub        := 0;
+	alogin      := '';
+	apassw      := '';
+	acompany_id := 0;
+	acontact_id := '';
+	adata0      := '';
+	alog        := '';
+	acreated    := 0;
+	aucreated   := 0;
+	aupdated    := 0;
+	auupdated   := 0;
+	aconcurrency:= 0;
+	astatus     := '';
+  utils.LiberarLista(roles);
+  roles := TList.Create;
+  changeRol  := false;
+END;
+
+PROCEDURE Tsecurity_mxuser.fromJsonString(s:string);
+BEGIN
+	self.fromJson(TlkJSON.ParseText(s) as TlkJSONobject);
+END;
+
+PROCEDURE Tsecurity_mxuser.fromJson(o:TlkJSONobject);
+BEGIN
+	id          := (o.Field['id'] as TlkJSONnumber).Value;
+	sub         := (o.Field['sub'] as TlkJSONnumber).Value;
+	login       := (o.Field['login'] as TlkJSONstring).Value;
+	passw       := (o.Field['passw'] as TlkJSONstring).Value;
+	company_id  := (o.Field['company_id'] as TlkJSONnumber).Value;
+	contact_id  := (o.Field['contact_id'] as TlkJSONstring).Value;
+	data0       := (o.Field['data0'] as TlkJSONstring).Value;
+	log         := (o.Field['log'] as TlkJSONstring).Value;
+	created     := (o.Field['created'] as TlkJSONnumber).Value;
+	ucreated    := (o.Field['ucreated'] as TlkJSONnumber).Value;
+	updated     := (o.Field['updated'] as TlkJSONnumber).Value;
+	uupdated    := (o.Field['uupdated'] as TlkJSONnumber).Value;
+	concurrency := (o.Field['concurrency'] as TlkJSONnumber).Value;
+	status      := (o.Field['status'] as TlkJSONstring).Value;
+END;
+
+FUNCTION Tsecurity_mxuser.toJsonString : string;
+var  json : TlkJSONobject;
+BEGIN
+	json := TlkJSONobject.Create();
+	TRY
+		json.Add('id',TlkJSONNumber.Generate(id));
+		json.Add('sub',TlkJSONNumber.Generate(sub));
+		json.Add('login',TlkJSONstring.Generate(login));
+		json.Add('passw',TlkJSONstring.Generate(passw));
+		json.Add('company_id',TlkJSONNumber.Generate(company_id));
+		json.Add('contact_id',TlkJSONstring.Generate(contact_id));
+		json.Add('data0',TlkJSONstring.Generate(data0));
+		json.Add('log',TlkJSONstring.Generate(log));
+		json.Add('created',TlkJSONNumber.Generate(created));
+		json.Add('ucreated',TlkJSONNumber.Generate(ucreated));
+		json.Add('updated',TlkJSONNumber.Generate(updated));
+		json.Add('uupdated',TlkJSONNumber.Generate(uupdated));
+		json.Add('concurrency',TlkJSONNumber.Generate(concurrency));
+		json.Add('status',TlkJSONstring.Generate(status));
+	FINALLY
+		RESULT := TlkJSON.GenerateText(json);
+		FreeAndNIL(json);
+	END;
+END;
+
+
+PROCEDURE Tsecurity_mxuser.setAtributos(pid:Integer; psub:Integer; plogin:String; ppassw:string; pcompany_id:Integer; pcontact_id:String; pdata0:String; plog:String; pcreated:TDateTime; pucreated:Integer; pupdated:TDateTime; puupdated:Integer; pconcurrency:Integer; pstatus:String);		
+BEGIN
+	aid         := pid         ;
+	asub        := psub        ;
+	alogin      := plogin      ;
+	apassw      := ppassw      ;
+	acompany_id := pcompany_id ;
+	acontact_id := pcontact_id ;
+	adata0      := pdata0      ;
+	alog        := plog        ;
+	acreated    := pcreated    ;
+	aucreated   := pucreated   ;
+	aupdated    := pupdated    ;
+	auupdated   := puupdated   ;
+	aconcurrency:= pconcurrency;
+	astatus     := pstatus     ;	
+END;
+
+FUNCTION Tsecurity_mxuser.sqlGetField(field:string) : string;
+BEGIN
+	RESULT := 'select '+field+' from security_mxuser order by '+field;
+END;
+
+FUNCTION Tsecurity_mxuser.sqlGetKeyValue(key,value : string) : string;
+BEGIN
+	RESULT := 'select '+key+' as key,'+value+'as value from security_mxuser order by '+value;
+END;
+
+FUNCTION  Tsecurity_mxuser.sqlGetAll : string;
+BEGIN
+	RESULT := 'select * from security_mxuser';
+END;
+
+PROCEDURE Tsecurity_mxuser.filtrar(cds:TAstaClientDataSet; where:string = ''; params:TAstaParamList=NIL);
+var  	y : string;
+	i : word;
+BEGIN
+	y := ' where ';
+	IF SELF.id<>0 THEN
+	BEGIN
+		cds.sql.add( y +'id= :pid');
+		cds.ParamByName('pid').asInteger	:= SELF.id;
+		y := ' and ';
+	END;
+
+	IF SELF.sub<>0 THEN
+	BEGIN
+		cds.sql.add( y +'sub= :psub');
+		cds.ParamByName('psub').asInteger	:= SELF.sub;
+		y := ' and ';
+	END;
+
+	IF SELF.login<>'' THEN
+	BEGIN
+		cds.sql.add( y +'login= :plogin');
+		cds.ParamByName('plogin').asString	:= SELF.login;
+		y := ' and ';
+	END;
+{
+	IF SELF.passw<>'' THEN
+	BEGIN
+		cds.sql.add( y +'passw= :ppassw');
+		cds.ParamByName('ppassw').asInteger	:= SELF.passw;
+		y := ' and ';
+	END;
+ }
+	IF SELF.company_id<>0 THEN
+	BEGIN
+		cds.sql.add( y +'company_id= :pcompany_id');
+		cds.ParamByName('pcompany_id').asInteger	:= SELF.company_id;
+		y := ' and ';
+	END;
+
+	IF SELF.contact_id<>'' THEN
+	BEGIN
+		cds.sql.add( y +'contact_id= :pcontact_id');
+		cds.ParamByName('pcontact_id').asString	:= SELF.contact_id;
+		y := ' and ';
+	END;
+
+	IF SELF.data0<>'' THEN
+	BEGIN
+		cds.sql.add( y +'data0= :pdata0');
+		cds.ParamByName('pdata0').asString	:= SELF.data0;
+		y := ' and ';
+	END;
+{
+	IF SELF.log<>'' THEN
+	BEGIN
+		cds.sql.add( y +'log= :plog');
+		cds.ParamByName('plog').asString	:= SELF.log;
+		y := ' and ';
+	END;
+
+	IF SELF.created<>0 THEN
+	BEGIN
+		cds.sql.add( y +'created= :pcreated');
+		cds.ParamByName('pcreated').asDateTime	:= SELF.created;
+		y := ' and ';
+	END;
+
+	IF SELF.ucreated<>0 THEN
+	BEGIN
+		cds.sql.add( y +'ucreated= :pucreated');
+		cds.ParamByName('pucreated').asInteger	:= SELF.ucreated;
+		y := ' and ';
+	END;
+
+	IF SELF.updated<>0 THEN
+	BEGIN
+		cds.sql.add( y +'updated= :pupdated');
+		cds.ParamByName('pupdated').asDateTime	:= SELF.updated;
+		y := ' and ';
+	END;
+
+	IF SELF.uupdated<>0 THEN
+	BEGIN
+		cds.sql.add( y +'uupdated= :puupdated');
+		cds.ParamByName('puupdated').asInteger	:= SELF.uupdated;
+		y := ' and ';
+	END;
+
+	IF SELF.concurrency<>0 THEN
+	BEGIN
+		cds.sql.add( y +'concurrency= :pconcurrency');
+		cds.ParamByName('pconcurrency').asInteger	:= SELF.concurrency;
+		y := ' and ';
+	END;
+
+	IF SELF.status<>'' THEN
+	BEGIN
+		cds.sql.add( y +'status= :pstatus');
+		cds.ParamByName('pstatus').asString	:= SELF.status;
+		y := ' and ';
+	END;
+
+ }
+	if where <> '' then
+	begin
+	cds.sql.add(where);
+	for i:=0 to params.count-1 do
+		cds.params.AddOneParamItem(params.items[i]);
+	end;
+END;
+
+
+PROCEDURE Tsecurity_mxuser.QBE(ClientDS: TAstaClientDataSet; where:string = ''; params:TAstaParamList=NIL);
+BEGIN
+	initDataSet(ClientDS);
+	clientDS.sql.add(sqlGetAll);
+	filtrar(ClientDS,where,params);
+	clientDS.prepare;
+	clientDS.Open;
+END;
+
+PROCEDURE Tsecurity_mxuser.QBE(columns,where :string ; ClientDS: TAstaClientDataSet; params:TAstaParamList=NIL);
+BEGIN
+	initDataSet(ClientDS);
+	clientDS.sql.add('select '+columns+ ' from security_mxuser');
+	ClientDS.SQL.Add('where '+where);
+
+	if params <> NIL then
+		ClientDS.Params := params;
+
+	clientDS.prepare;
+	clientDS.Open;
+END;
+
+function Tsecurity_mxuser.exist(ClientDS: TAstaClientDataSet): boolean;
+begin
+	initDataSet(ClientDS);
+	ClientDS.SQL.Add('select id from security_mxuser where ID=:pID');
+	ClientDS.ParamByName('pID').AsInteger := SELF.ID;
+	ClientDS.Open;
+
+	Result := not ClientDS.IsEmpty;
+end;
+
+procedure Tsecurity_mxuser.fromClientDataSet(ClientDS: TAstaClientDataSet);
+var  R : Tsecurity_mxuser_roles;
+     caux : TAstaClientDataSet;
+begin
+	inherited;
+	IF NOT ClientDS.Active THEN EXIT;
+	SELF.id          := clientDS.FieldByName('id').AsInteger;
+	SELF.sub         := clientDS.FieldByName('sub').AsInteger;
+	SELF.login       := clientDS.FieldByName('login').AsString;
+	SELF.passw       := clientDS.FieldByName('passw').AsString;
+	SELF.company_id  := clientDS.FieldByName('company_id').AsInteger;
+	SELF.contact_id  := clientDS.FieldByName('contact_id').AsString;
+	SELF.data0       := clientDS.FieldByName('data0').AsString;
+	SELF.log         := clientDS.FieldByName('log').AsString;
+	SELF.created     := clientDS.FieldByName('created').AsDateTime;
+	SELF.ucreated    := clientDS.FieldByName('ucreated').AsInteger;
+	SELF.updated     := clientDS.FieldByName('updated').AsDateTime;
+	SELF.uupdated    := clientDS.FieldByName('uupdated').AsInteger;
+	SELF.concurrency := clientDS.FieldByName('concurrency').AsInteger;
+	SELF.status      := clientDS.FieldByName('status').AsString;
+
+  utils.LiberarLista(self.Roles);
+
+  R    := Tsecurity_mxuser_roles.Create;
+  caux := TAstaClientDataSet.Create(Application);
+  cAux.AstaClientSocket := ClientDS.AstaClientSocket;
+  try
+  R.mxuser_id := self.id;
+  self.roles  := R.getList(caux,SELF.id);
+  finally
+         FreeAndNil(R);
+         FreeAndNil(cAux);
+  end;
+end;
+
+
+procedure Tsecurity_mxuser.fromGUI(form: TForm);
+begin
+	with form do
+	begin
+//		SELF.id         := utils.formObtenerPropiedad(FindComponent('cid'),'Text');
+//		SELF.sub        := utils.formObtenerPropiedad(FindComponent('csub'),'Text');
+		SELF.login      := utils.formObtenerPropiedad(FindComponent('clogin'),'Text');
+		SELF.passw      := utils.StringEncriptar(utils.formObtenerPropiedad(FindComponent('cpassw'),'Text'));
+//		SELF.company_id := utils.formObtenerPropiedad(FindComponent('ccompany_id'),'Text');
+		SELF.contact_id := utils.formObtenerPropiedad(FindComponent('ccontact_id'),'Text');
+//		SELF.data0      := utils.formObtenerPropiedad(FindComponent('cdata0'),'Text');
+//		SELF.log        := utils.formObtenerPropiedad(FindComponent('clog'),'Text');
+{		SELF.created    := utils.formObtenerPropiedad(FindComponent('ccreated'),'Text');
+		SELF.ucreated   := utils.formObtenerPropiedad(FindComponent('cucreated'),'Text');
+		SELF.updated    := utils.formObtenerPropiedad(FindComponent('cupdated'),'Text');
+		SELF.uupdated   := utils.formObtenerPropiedad(FindComponent('cuupdated'),'Text');
+		SELF.concurrency:= utils.formObtenerPropiedad(FindComponent('cconcurrency'),'Text');
+		SELF.status     := utils.formObtenerPropiedad(FindComponent('cstatus'),'Text');
+}
+	end;
+end;
+
+procedure Tsecurity_mxuser.toGUI(form: TForm);
+begin
+	inherited;
+	with form do
+	begin
+ 	//utils.formAsignaPropiedad(FindComponent('cid'),'Text', IntTOStr(SELF.id));
+	//utils.formAsignaPropiedad(FindComponent('csub'),'Text', IntTOStr(SELF.sub));
+	utils.formAsignaPropiedad(FindComponent('clogin'),'Text', SELF.login);
+	utils.formAsignaPropiedad(FindComponent('cpassw'),'Text', utils.StringDesencriptar(SELF.passw));
+	//utils.formAsignaPropiedad(FindComponent('ccompany_id'),'Text', IntTOStr(SELF.company_id));
+	utils.formAsignaPropiedad(FindComponent('ccontact_id'),'Text', (SELF.contact_id));
+	//utils.formAsignaPropiedad(FindComponent('cdata0'),'Text', (SELF.data0));
+	//utils.formAsignaPropiedad(FindComponent('clog'),'Text', (SELF.log));
+	//utils.formAsignaPropiedad(FindComponent('ccreated'),'Text', IntTOStr(SELF.created));
+	//utils.formAsignaPropiedad(FindComponent('cucreated'),'Text', IntTOStr(SELF.ucreated));
+	//utils.formAsignaPropiedad(FindComponent('cupdated'),'Text', IntTOStr(SELF.updated));
+	//utils.formAsignaPropiedad(FindComponent('cuupdated'),'Text', IntTOStr(SELF.uupdated));
+	//utils.formAsignaPropiedad(FindComponent('cconcurrency'),'Text', IntTOStr(SELF.concurrency));
+	//utils.formAsignaPropiedad(FindComponent('cstatus'),'Text', (SELF.status));
+
+	end;
+end;
+
+function Tsecurity_mxuser.save(ClientDS: TAstaClientDataSet;transacction: byte): byte;
+var   date : TDateTime;
+      rol  : Psecurity_mxuser_roles;
+      i: word;
+begin
+	RESULT := cFalse;
+	date := self.getFechaHoraServer(ClientDS);
+	initDataSet(ClientDS);
+
+	if (GCompany.persist) and (autocommit) then
+		ClientDS.AstaClientSocket.StartTransaction;
+
+  TRY
+	case transacction of
+
+	1 : begin         //update
+		ClientDS.SQL.Add('UPDATE security_mxuser SET '+
+				' sub = :psub'+
+				',login = :plogin'+
+				',passw = :ppassw'+
+				',company_id = :pcompany_id'+
+				',contact_id = :pcontact_id'+
+				',data0 = :pdata0'+
+				',log = :plog'+
+				',created = :pcreated'+
+				',ucreated = :pucreated'+
+				',updated = :pupdated'+
+				',uupdated = :puupdated'+
+				',concurrency = :pconcurrency'+
+				',status = :pstatus'+
+				' WHERE id = :pid'
+		);
+		ClientDS.ParamByName('pid').asInteger                := SELF.id;
+		ClientDS.ParamByName('psub').asInteger               := SELF.sub;
+		ClientDS.ParamByName('plogin').asString              := SELF.login;
+		ClientDS.ParamByName('ppassw').AsString              := SELF.passw;
+		ClientDS.ParamByName('pcompany_id').asInteger        := SELF.company_id;
+		ClientDS.ParamByName('pcontact_id').asString         := SELF.contact_id;
+		ClientDS.ParamByName('pdata0').asString              := IntToStr(utils.GetHashElfico(self.login+self.passw+IntToStr(self.company_id)));
+		ClientDS.ParamByName('plog').asString                := SELF.log;
+		ClientDS.ParamByName('pcreated').asDatetime          := date;
+		ClientDS.ParamByName('pucreated').asInteger          := SELF.ucreated;
+		ClientDS.ParamByName('pupdated').asDatetime          := date;
+		ClientDS.ParamByName('puupdated').asInteger          := SELF.uupdated;
+		ClientDS.ParamByName('pconcurrency').asInteger       := SELF.concurrency+1;
+		ClientDS.ParamByName('pstatus').asString             := SELF.status;
+
+    if changeRol then
+    begin
+       ClientDS.ExecSQL;
+       //borrando los roles anterioress
+       rol^ := Tsecurity_mxuser_roles.Create;
+       rol.mxuser_id := self.id;
+       rol.save(ClientDS,tDelete);
+
+      //ahora insertamos los roles
+      if roles.Count>0 then
+      begin
+           ClientDS.ExecSQL;
+           initDataSet(ClientDS);
+
+           for i:=0 to roles.Count-1 do
+           begin
+                rol := roles.Items[i];
+                rol.mxuser_id := self.id;
+                rol.save(ClientDS,tAdd);
+                if (i<>roles.count-1) then
+                   ClientDS.ExecSQL;
+           end;
+      end;
+    end;
+
+	end;
+
+	0: begin	//insert
+		SELF.nextID(clientDS);
+
+		initDataSet(ClientDS);
+		ClientDS.SQL.Add('INSERT INTO security_mxuser (id,sub,login,passw,company_id,contact_id,data0,log,created,ucreated,updated,uupdated,concurrency,status)');
+		ClientDS.SQL.Add(' VALUES ');
+		ClientDS.SQL.Add('(:pid,:psub,:plogin,:ppassw,:pcompany_id,:pcontact_id,:pdata0,:plog,:pcreated,:pucreated,:pupdated,:puupdated,:pconcurrency,:pstatus)');
+		ClientDS.ParamByName('pid').asInteger                := SELF.id;
+		ClientDS.ParamByName('psub').asInteger               := SELF.sub;
+		ClientDS.ParamByName('plogin').asString              := SELF.login;
+		ClientDS.ParamByName('ppassw').AsString              := SELF.passw;
+		ClientDS.ParamByName('pcompany_id').asInteger        := SELF.company_id;
+		ClientDS.ParamByName('pcontact_id').asString         := SELF.contact_id;
+		ClientDS.ParamByName('pdata0').asString              := IntToStr(utils.GetHashElfico(self.login+self.passw+IntToStr(self.company_id)));
+		ClientDS.ParamByName('plog').asString                := SELF.log;
+		ClientDS.ParamByName('pcreated').asDatetime          := date;
+		ClientDS.ParamByName('pucreated').asInteger          := SELF.ucreated;
+		ClientDS.ParamByName('pupdated').asDatetime          := date;
+		ClientDS.ParamByName('puupdated').asInteger          := SELF.uupdated;
+		ClientDS.ParamByName('pconcurrency').asInteger       := 0;
+		ClientDS.ParamByName('pstatus').asString             := SELF.status;
+
+    //ahora insertamos los roles
+    if roles.Count>0 then
+    begin
+         ClientDS.ExecSQL;
+         initDataSet(ClientDS);
+
+         for i:=0 to roles.Count-1 do
+         begin
+              rol := roles.Items[i];
+              rol.mxuser_id := self.id;
+              rol.setAutoCommit(false);
+              rol.save(ClientDS,tAdd);
+              if (i<>roles.count-1) then
+                 ClientDS.ExecSQL;
+         end;
+    end;
+	end;
+
+	2: begin //delete
+		ClientDS.SQL.Add('delete from security_mxuser where id =:pid');
+		ClientDS.ParamByName('pID').asInteger := SELF.ID;
+	end;
+
+  end;
+//	if autocommit then
+//		ClientDS.AstaClientSocket.StartTransaction;
+	Result := cTrue;
+
+   FINALLY
+   ClientDS.ExecSQL;
+	 if autocommit then 
+	     clientDS.AstaClientSocket.EndTransaction(true);
+   end;
+end;
+
+procedure Tsecurity_mxuser.nextID(ClientDS: TAstaClientDataSet);
+begin
+		 initDataSet(ClientDS);
+
+		 ClientDS.SQL.Add('select max(sub) as sub from security_mxuser where company_id = :pcompanyID');
+		 ClientDS.ParamByName('pcompanyID').AsInteger := self.company_id;
+		 ClientDS.Open;
+
+		 self.SUB := ClientDS.fieldbyName('sub').AsInteger + 1;
+		 self.ID  := (SELF.company_id * 1000)+ SELF.SUB;
+end;
+
+
+PROCEDURE Tsecurity_mxuser.setid(pid:Integer);
+BEGIN
+	aid:= pid;
+END;
+
+PROCEDURE Tsecurity_mxuser.setsub(psub:Integer);
+BEGIN
+	asub:= psub;
+END;
+
+PROCEDURE Tsecurity_mxuser.setlogin(plogin:String);
+BEGIN
+	alogin:= plogin;
+END;
+
+PROCEDURE Tsecurity_mxuser.setpassw(ppassw:string);
+BEGIN
+	apassw:= ppassw;
+END;
+
+PROCEDURE Tsecurity_mxuser.setcompany_id(pcompany_id:Integer);
+BEGIN
+	acompany_id:= pcompany_id;
+END;
+
+PROCEDURE Tsecurity_mxuser.setcontact_id(pcontact_id:String);
+BEGIN
+	acontact_id:= pcontact_id;
+END;
+
+PROCEDURE Tsecurity_mxuser.setdata0(pdata0:String);
+BEGIN
+	adata0:= pdata0;
+END;
+
+PROCEDURE Tsecurity_mxuser.setlog(plog:String);
+BEGIN
+	alog:= plog;
+END;
+
+PROCEDURE Tsecurity_mxuser.setcreated(pcreated:TDateTime);
+BEGIN
+	acreated:= pcreated;
+END;
+
+PROCEDURE Tsecurity_mxuser.setucreated(pucreated:Integer);
+BEGIN
+	aucreated:= pucreated;
+END;
+
+PROCEDURE Tsecurity_mxuser.setupdated(pupdated:TDateTime);
+BEGIN
+	aupdated:= pupdated;
+END;
+
+PROCEDURE Tsecurity_mxuser.setuupdated(puupdated:Integer);
+BEGIN
+	auupdated:= puupdated;
+END;
+
+PROCEDURE Tsecurity_mxuser.setconcurrency(pconcurrency:Integer);
+BEGIN
+	aconcurrency:= pconcurrency;
+END;
+
+PROCEDURE Tsecurity_mxuser.setstatus(pstatus:String);
+BEGIN
+	astatus:= pstatus;
+END;
+
+
+FUNCTION Tsecurity_mxuser.getid	:Integer;
+BEGIN
+	RESULT := aid;
+END;
+
+FUNCTION Tsecurity_mxuser.getsub	:Integer;
+BEGIN
+	RESULT := asub;
+END;
+
+FUNCTION Tsecurity_mxuser.getlogin	:String;
+BEGIN
+	RESULT := alogin;
+END;
+
+FUNCTION Tsecurity_mxuser.getpassw	:string;
+BEGIN
+	RESULT := apassw;
+END;
+
+FUNCTION Tsecurity_mxuser.getcompany_id	:Integer;
+BEGIN
+	RESULT := acompany_id;
+END;
+
+FUNCTION Tsecurity_mxuser.getcontact_id	:String;
+BEGIN
+	RESULT := acontact_id;
+END;
+
+FUNCTION Tsecurity_mxuser.getdata0	:String;
+BEGIN
+	RESULT := adata0;
+END;
+
+FUNCTION Tsecurity_mxuser.getlog	:String;
+BEGIN
+	RESULT := alog;
+END;
+
+FUNCTION Tsecurity_mxuser.getcreated	:TDateTime;
+BEGIN
+	RESULT := acreated;
+END;
+
+FUNCTION Tsecurity_mxuser.getucreated	:Integer;
+BEGIN
+	RESULT := aucreated;
+END;
+
+FUNCTION Tsecurity_mxuser.getupdated	:TDateTime;
+BEGIN
+	RESULT := aupdated;
+END;
+
+FUNCTION Tsecurity_mxuser.getuupdated	:Integer;
+BEGIN
+	RESULT := auupdated;
+END;
+
+FUNCTION Tsecurity_mxuser.getconcurrency	:Integer;
+BEGIN
+	RESULT := aconcurrency;
+END;
+
+FUNCTION Tsecurity_mxuser.getstatus	:String;
+BEGIN
+	RESULT := astatus;
+END;
+
+
+initialization
+     Guser := Tsecurity_mxuser.Create;
+finalization
+      FreeAndNil(gUser);
+END.
+

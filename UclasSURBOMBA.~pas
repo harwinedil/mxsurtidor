@@ -1,0 +1,468 @@
+UNIT UclasSURBOMBA;
+
+{
+GENERADO AUTOMATICAMENTE POR "Generador v.2012"
+AUTOR              : HARWIN EDIL PEREZ SALINAS   [harwinedil@gmail.com]
+DESCRIPCION        : Clase para interactuar con la Tabla : SURBOMBA
+FECHA CREACION     : 06/12/2012 Hora: 00:03:26
+ULTIMA MODIFICACION: 06/12/2012 Hora: 00:03:26
+MODIFICADO POR     : HARWIN EDIL PEREZ SALINAS
+OBSERVACIONES      :
+
+}
+
+INTERFACE
+
+USES
+  sysUtils,uLkJSON,AstaDrv2,AstaClientDataset,AstaParamList,UBaseObject,Uconstantes,
+  forms, classes,UGralUtilidades,UclasSYSUSER,DBCtrls,SUIDBCtrls;
+
+
+TYPE
+	PSURBOMBA = ^TSURBOMBA;
+	TSURBOMBA = CLASS(TBaseObject)
+	PRIVATE
+		aIDSURTIDOR               	: String[22]; 
+		aDESCRIPCION              	: String[30]; 
+		aIDESTACION               	: String[22]; 
+		aALIAS                    	: String[30]; 
+		aPETROBOX                 	: String[2]; 
+		aAFORADORVALORMAXIMOVOLUMEN	: Double;
+	PUBLIC
+		CONSTRUCTOR     Create;		OVERLOAD;
+		CONSTRUCTOR     Create(pIDSURTIDOR:String; pDESCRIPCION:String; pIDESTACION:String; pALIAS:String; pPETROBOX:String; pAFORADORVALORMAXIMOVOLUMEN:Double); OVERLOAD;
+		CONSTRUCTOR     Create(const pObjeto:TSURBOMBA);OVERLOAD;
+		DESTRUCTOR      Destroy;	OVERRIDE;
+		PROCEDURE       init;		OVERRIDE;
+		PROCEDURE       setAtributos(pIDSURTIDOR:String; pDESCRIPCION:String; pIDESTACION:String; pALIAS:String; pPETROBOX:String; pAFORADORVALORMAXIMOVOLUMEN:Double);		
+
+		PROCEDURE       fromJson(o:TlkJSONobject); OVERRIDE;
+		PROCEDURE       fromJsonString(s:string);  OVERRIDE;
+		FUNCTION        toJsonString : string; OVERRIDE;
+		FUNCTION        sqlGetField(field:string) : string; OVERRIDE;
+		FUNCTION        sqlGetKeyValue(key,value : string) : string; OVERRIDE;
+		FUNCTION        sqlGetAll : string; OVERRIDE;
+		PROCEDURE       QBE( columns,where :string ; ClientDS: TAstaClientDataSet; params:TAstaParamList=NIL); OVERLOAD;OVERRIDE;
+		PROCEDURE       filtrar(cds:TAstaClientDataSet; where:string = ''; params:TAstaParamList=NIL); OVERRIDE;
+		PROCEDURE       QBE(ClientDS: TAstaClientDataSet; where:string = '';params:TAstaParamList=NIL);  OVERLOAD;OVERRIDE;
+
+		FUNCTION        save(ClientDS: TAstaClientDataSet; transacction: byte) : byte; OVERRIDE;
+		FUNCTION        exist(ClientDS: TAstaClientDataSet) : boolean;OVERRIDE;
+		PROCEDURE       fromClientDataSet(ClientDS: TAstaClientDataSet);OVERRIDE;
+		PROCEDURE       fromGUI(form:TForm ); OVERRIDE;
+		PROCEDURE       toGUI(form:TForm ); OVERRIDE;
+		PROCEDURE       nextID(ClientDS: TAstaClientDataSet); OVERRIDE;
+
+		PROCEDURE   	setIDSURTIDOR(pIDSURTIDOR:String);
+		PROCEDURE   	setDESCRIPCION(pDESCRIPCION:String);
+		PROCEDURE   	setIDESTACION(pIDESTACION:String);
+		PROCEDURE   	setALIAS(pALIAS:String);
+		PROCEDURE   	setPETROBOX(pPETROBOX:String);
+		PROCEDURE   	setAFORADORVALORMAXIMOVOLUMEN(pAFORADORVALORMAXIMOVOLUMEN:Double);
+
+		FUNCTION    	getIDSURTIDOR                 	:String;
+		FUNCTION    	getDESCRIPCION                	:String;
+		FUNCTION    	getIDESTACION                 	:String;
+		FUNCTION    	getALIAS                      	:String;
+		FUNCTION    	getPETROBOX                   	:String;
+		FUNCTION    	getAFORADORVALORMAXIMOVOLUMEN 	:Double;
+
+		PROPERTY    	IDSURTIDOR                  : String    	read getIDSURTIDOR                 	write setIDSURTIDOR                 ;
+		PROPERTY    	DESCRIPCION                 : String    	read getDESCRIPCION                	write setDESCRIPCION                ;
+		PROPERTY    	IDESTACION                  : String    	read getIDESTACION                 	write setIDESTACION                 ;
+		PROPERTY    	ALIAS                       : String    	read getALIAS                      	write setALIAS                      ;
+		PROPERTY    	PETROBOX                    : String    	read getPETROBOX                   	write setPETROBOX                   ;
+		PROPERTY    	AFORADORVALORMAXIMOVOLUMEN  : Double    	read getAFORADORVALORMAXIMOVOLUMEN 	write setAFORADORVALORMAXIMOVOLUMEN ;
+
+		
+	END;
+
+IMPLEMENTATION
+
+uses DB;
+{TSURBOMBA}
+
+CONSTRUCTOR TSURBOMBA.Create;
+BEGIN
+	aIDSURTIDOR                := '';
+	aDESCRIPCION               := '';
+	aIDESTACION                := '';
+	aALIAS                     := '';
+	aPETROBOX                  := '';
+	aAFORADORVALORMAXIMOVOLUMEN:= 0;	
+	autocommit := true;												
+END;
+
+CONSTRUCTOR TSURBOMBA.Create(pIDSURTIDOR:String; pDESCRIPCION:String; pIDESTACION:String; pALIAS:String; pPETROBOX:String; pAFORADORVALORMAXIMOVOLUMEN:Double);
+BEGIN
+	aIDSURTIDOR                := pIDSURTIDOR                ;
+	aDESCRIPCION               := pDESCRIPCION               ;
+	aIDESTACION                := pIDESTACION                ;
+	aALIAS                     := pALIAS                     ;
+	aPETROBOX                  := pPETROBOX                  ;
+	aAFORADORVALORMAXIMOVOLUMEN:= pAFORADORVALORMAXIMOVOLUMEN;
+	autocommit := true;
+END;
+
+CONSTRUCTOR TSURBOMBA.Create(const pObjeto:TSURBOMBA);
+BEGIN
+	aIDSURTIDOR                := pObjeto.IDSURTIDOR                ;
+	aDESCRIPCION               := pObjeto.DESCRIPCION               ;
+	aIDESTACION                := pObjeto.IDESTACION                ;
+	aALIAS                     := pObjeto.ALIAS                     ;
+	aPETROBOX                  := pObjeto.PETROBOX                  ;
+	aAFORADORVALORMAXIMOVOLUMEN:= pObjeto.AFORADORVALORMAXIMOVOLUMEN;
+	autocommit := pObjeto.autocommit;
+END;
+
+DESTRUCTOR TSURBOMBA.Destroy;
+BEGIN
+	
+	inherited Destroy;
+END;
+
+PROCEDURE TSURBOMBA.init;
+BEGIN
+	aIDSURTIDOR                := '';
+	aDESCRIPCION               := '';
+	aIDESTACION                := '';
+	aALIAS                     := '';
+	aPETROBOX                  := '';
+	aAFORADORVALORMAXIMOVOLUMEN:= 0;														
+END;
+
+PROCEDURE TSURBOMBA.fromJsonString(s:string);
+BEGIN
+	self.fromJson(TlkJSON.ParseText(s) as TlkJSONobject);
+END;
+
+PROCEDURE TSURBOMBA.fromJson(o:TlkJSONobject);
+BEGIN
+	IDSURTIDOR                 := (o.Field['IDSURTIDOR'] as TlkJSONstring).Value;
+	DESCRIPCION                := (o.Field['DESCRIPCION'] as TlkJSONstring).Value;
+	IDESTACION                 := (o.Field['IDESTACION'] as TlkJSONstring).Value;
+	ALIAS                      := (o.Field['ALIAS'] as TlkJSONstring).Value;
+	PETROBOX                   := (o.Field['PETROBOX'] as TlkJSONstring).Value;
+	AFORADORVALORMAXIMOVOLUMEN := (o.Field['AFORADORVALORMAXIMOVOLUMEN'] as TlkJSONnumber).Value;
+END;
+
+FUNCTION TSURBOMBA.toJsonString : string;
+var  json : TlkJSONobject;
+BEGIN
+	json := TlkJSONobject.Create();
+	TRY	
+		json.Add('IDSURTIDOR',TlkJSONstring.Generate(IDSURTIDOR));
+		json.Add('DESCRIPCION',TlkJSONstring.Generate(DESCRIPCION));
+		json.Add('IDESTACION',TlkJSONstring.Generate(IDESTACION));
+		json.Add('ALIAS',TlkJSONstring.Generate(ALIAS));
+		json.Add('PETROBOX',TlkJSONstring.Generate(PETROBOX));
+		json.Add('AFORADORVALORMAXIMOVOLUMEN',TlkJSONNumber.Generate(AFORADORVALORMAXIMOVOLUMEN));
+	FINALLY
+		RESULT := TlkJSON.GenerateText(json);
+		FreeAndNIL(json);
+	END;
+END;
+
+
+PROCEDURE TSURBOMBA.setAtributos(pIDSURTIDOR:String; pDESCRIPCION:String; pIDESTACION:String; pALIAS:String; pPETROBOX:String; pAFORADORVALORMAXIMOVOLUMEN:Double);		
+BEGIN
+	aIDSURTIDOR                := pIDSURTIDOR                ;
+	aDESCRIPCION               := pDESCRIPCION               ;
+	aIDESTACION                := pIDESTACION                ;
+	aALIAS                     := pALIAS                     ;
+	aPETROBOX                  := pPETROBOX                  ;
+	aAFORADORVALORMAXIMOVOLUMEN:= pAFORADORVALORMAXIMOVOLUMEN;	
+END;
+
+FUNCTION TSURBOMBA.sqlGetField(field:string) : string;
+BEGIN
+	RESULT := 'select '+field+' from SURBOMBA order by '+field;
+END;
+
+FUNCTION TSURBOMBA.sqlGetKeyValue(key,value : string) : string;
+BEGIN
+	RESULT := 'select '+key+' as key,'+value+'as value from SURBOMBA order by '+value;
+END;
+
+FUNCTION  TSURBOMBA.sqlGetAll : string;
+BEGIN
+	RESULT := 'select * from SURBOMBA';
+END;
+
+PROCEDURE TSURBOMBA.filtrar(cds:TAstaClientDataSet; where:string = ''; params:TAstaParamList=NIL);
+var  	y : string;
+	i : word;
+BEGIN
+	y := ' where ';
+	IF SELF.IDSURTIDOR<>'' THEN
+	BEGIN
+		cds.sql.add( y +'IDSURTIDOR= :pIDSURTIDOR');
+		cds.ParamByName('pIDSURTIDOR').asString	:= SELF.IDSURTIDOR;
+		y := ' and ';
+	END;
+
+	IF SELF.DESCRIPCION<>'' THEN
+	BEGIN
+		cds.sql.add( y +'DESCRIPCION= :pDESCRIPCION');
+		cds.ParamByName('pDESCRIPCION').asString	:= SELF.DESCRIPCION;
+		y := ' and ';
+	END;
+
+	IF SELF.IDESTACION<>'' THEN
+	BEGIN
+		cds.sql.add( y +'IDESTACION= :pIDESTACION');
+		cds.ParamByName('pIDESTACION').asString	:= SELF.IDESTACION;
+		y := ' and ';
+	END;
+
+	IF SELF.ALIAS<>'' THEN
+	BEGIN
+		cds.sql.add( y +'ALIAS= :pALIAS');
+		cds.ParamByName('pALIAS').asString	:= SELF.ALIAS;
+		y := ' and ';
+	END;
+
+	IF SELF.PETROBOX<>'' THEN
+	BEGIN
+		cds.sql.add( y +'PETROBOX= :pPETROBOX');
+		cds.ParamByName('pPETROBOX').asString	:= SELF.PETROBOX;
+		y := ' and ';
+	END;
+{
+	IF SELF.AFORADORVALORMAXIMOVOLUMEN<>0 THEN
+	BEGIN
+		cds.sql.add( y +'AFORADORVALORMAXIMOVOLUMEN= :pAFORADORVALORMAXIMOVOLUMEN');
+		cds.ParamByName('pAFORADORVALORMAXIMOVOLUMEN').asDouble	:= SELF.AFORADORVALORMAXIMOVOLUMEN;
+		y := ' and ';
+	END;
+ }
+
+	if where <> '' then
+	begin
+	cds.sql.add(where);
+	for i:=0 to params.count-1 do
+		cds.params.AddOneParamItem(params.items[i]);
+	end;
+END;
+
+
+PROCEDURE TSURBOMBA.QBE(ClientDS: TAstaClientDataSet; where:string = ''; params:TAstaParamList=NIL);
+BEGIN
+	initDataSet(ClientDS);
+	clientDS.sql.add(sqlGetAll);
+	filtrar(ClientDS,where,params);
+	clientDS.prepare;
+	clientDS.Open;
+END;
+
+PROCEDURE TSURBOMBA.QBE(columns,where :string ; ClientDS: TAstaClientDataSet; params:TAstaParamList=NIL);
+BEGIN
+	initDataSet(ClientDS);
+	clientDS.sql.add('select '+columns+ ' from SURBOMBA');
+	ClientDS.SQL.Add('where '+where);
+
+	if params <> NIL then
+		ClientDS.Params := params;
+
+	clientDS.prepare;
+	clientDS.Open;
+END;
+
+function TSURBOMBA.exist(ClientDS: TAstaClientDataSet): boolean;
+begin
+	initDataSet(ClientDS);
+	ClientDS.SQL.Add('select id from SURBOMBA where IDSurtidor=:pID');
+	ClientDS.ParamByName('pID').AsString := SELF.IDSURTIDOR;
+	ClientDS.Open;
+
+	Result := not ClientDS.IsEmpty;
+end;
+
+procedure TSURBOMBA.fromClientDataSet(ClientDS: TAstaClientDataSet);
+begin
+	inherited;
+	IF NOT ClientDS.Active THEN EXIT;
+	SELF.IDSURTIDOR                 := clientDS.FieldByName('IDSURTIDOR').AsString;
+	SELF.DESCRIPCION                := clientDS.FieldByName('DESCRIPCION').AsString;
+	SELF.IDESTACION                 := clientDS.FieldByName('IDESTACION').AsString;
+	SELF.ALIAS                      := clientDS.FieldByName('ALIAS').AsString;
+	SELF.PETROBOX                   := clientDS.FieldByName('PETROBOX').AsString;
+	SELF.AFORADORVALORMAXIMOVOLUMEN := clientDS.FieldByName('AFORADORVALORMAXIMOVOLUMEN').AsFloat;
+end;
+
+
+procedure TSURBOMBA.fromGUI(form: TForm);
+begin
+	with form do
+	begin
+{		SELF.IDSURTIDOR                := utils.formObtenerPropiedad(FindComponent('cIDSURTIDOR'),'Text');
+		SELF.DESCRIPCION               := utils.formObtenerPropiedad(FindComponent('cDESCRIPCION'),'Text');
+		SELF.IDESTACION                := utils.formObtenerPropiedad(FindComponent('cIDESTACION'),'Text');
+		SELF.ALIAS                     := utils.formObtenerPropiedad(FindComponent('cALIAS'),'Text');
+		SELF.PETROBOX                  := utils.formObtenerPropiedad(FindComponent('cPETROBOX'),'Text');
+		SELF.AFORADORVALORMAXIMOVOLUMEN:= utils.formObtenerPropiedad(FindComponent('cAFORADORVALORMAXIMOVOLUMEN'),'Text');
+		}
+	end;
+end;
+
+procedure TSURBOMBA.toGUI(form: TForm);
+begin
+	inherited;
+	with form do
+	begin
+{	utils.formAsignaPropiedad(FindComponent('cIDSURTIDOR'),'Text', (SELF.IDSURTIDOR));
+	utils.formAsignaPropiedad(FindComponent('cDESCRIPCION'),'Text', (SELF.DESCRIPCION));
+	utils.formAsignaPropiedad(FindComponent('cIDESTACION'),'Text', (SELF.IDESTACION));
+	utils.formAsignaPropiedad(FindComponent('cALIAS'),'Text', (SELF.ALIAS));
+	utils.formAsignaPropiedad(FindComponent('cPETROBOX'),'Text', (SELF.PETROBOX));
+	utils.formAsignaPropiedad(FindComponent('cAFORADORVALORMAXIMOVOLUMEN'),'Text', IntTOStr(SELF.AFORADORVALORMAXIMOVOLUMEN));
+}
+	end;
+end;
+
+function TSURBOMBA.save(ClientDS: TAstaClientDataSet;transacction: byte): byte;
+var   date : TDateTime;
+begin
+	RESULT := cFalse;
+	date := self.getFechaHoraServer(ClientDS);
+	initDataSet(ClientDS);
+
+//	if autocommit then
+//		ClientDS.AstaClientSocket.StartTransaction;
+
+	 TRY
+
+	case transacction of
+
+	1 : begin         //update
+		ClientDS.SQL.Add('UPDATE SURBOMBA SET '+
+				' IDSURTIDOR = :pIDSURTIDOR'+
+				',DESCRIPCION = :pDESCRIPCION'+
+				',IDESTACION = :pIDESTACION'+
+				',ALIAS = :pALIAS'+
+				',PETROBOX = :pPETROBOX'+
+				',AFORADORVALORMAXIMOVOLUMEN = :pAFORADORVALORMAXIMOVOLUMEN'+
+				' WHERE IDSURTIDOR = :pIDSURTIDOR'
+		);
+		ClientDS.ParamByName('pIDSURTIDOR').asString                        := SELF.IDSURTIDOR;
+		ClientDS.ParamByName('pDESCRIPCION').asString                       := SELF.DESCRIPCION;
+		ClientDS.ParamByName('pIDESTACION').asString                        := SELF.IDESTACION;
+		ClientDS.ParamByName('pALIAS').asString                             := SELF.ALIAS;
+		ClientDS.ParamByName('pPETROBOX').asString                          := SELF.PETROBOX;
+		ClientDS.ParamByName('pAFORADORVALORMAXIMOVOLUMEN').AsFloat         := SELF.AFORADORVALORMAXIMOVOLUMEN;
+	end;
+
+	0: begin	//insert
+		SELF.nextID(clientDS);
+
+		initDataSet(ClientDS);
+		ClientDS.SQL.Add('INSERT INTO SURBOMBA (IDSURTIDOR,DESCRIPCION,IDESTACION,ALIAS,PETROBOX,AFORADORVALORMAXIMOVOLUMEN)');
+		ClientDS.SQL.Add(' VALUES ');
+		ClientDS.SQL.Add('(:pIDSURTIDOR,:pDESCRIPCION,:pIDESTACION,:pALIAS,:pPETROBOX,:pAFORADORVALORMAXIMOVOLUMEN)');
+		ClientDS.ParamByName('pIDSURTIDOR').asString                        := SELF.IDSURTIDOR;
+		ClientDS.ParamByName('pDESCRIPCION').asString                       := SELF.DESCRIPCION;
+		ClientDS.ParamByName('pIDESTACION').asString                        := SELF.IDESTACION;
+		ClientDS.ParamByName('pALIAS').asString                             := SELF.ALIAS;
+		ClientDS.ParamByName('pPETROBOX').asString                          := SELF.PETROBOX;
+		ClientDS.ParamByName('pAFORADORVALORMAXIMOVOLUMEN').AsFloat        := SELF.AFORADORVALORMAXIMOVOLUMEN;
+	end;
+
+	2: begin //delete
+		ClientDS.SQL.Add('delete from SURBOMBA where id =:pid');
+		ClientDS.ParamByName('pID').AsString := SELF.IDSURTIDOR;
+	end;
+
+	4: begin //enable
+//		ClientDS.SQL.Add('update SURBOMBA set status=:pstatus where id =:pid');
+//		ClientDS.ParamByName('pID').asInteger    := SELF.ID;
+//		ClientDS.ParamByName('pstatus').asString := '1';
+	end;
+
+	5: begin //disable
+//		ClientDS.SQL.Add('update SURBOMBA set status=:pstatus where id =:pid');
+//		ClientDS.ParamByName('pID').asInteger    := SELF.ID;
+//		ClientDS.ParamByName('pstatus').asString := '0';
+	end;
+
+	end;
+	if autocommit then
+		ClientDS.AstaClientSocket.StartTransaction;
+
+	ClientDS.ExecSQL;
+	Result := cTrue;
+
+	 FINALLY
+	if autocommit then
+			ClientDS.AstaClientSocket.EndTransaction(true);
+	 END;
+end;
+
+procedure TSURBOMBA.nextID(ClientDS: TAstaClientDataSet);
+begin
+end;
+
+
+PROCEDURE TSURBOMBA.setIDSURTIDOR(pIDSURTIDOR:String);
+BEGIN
+	aIDSURTIDOR:= pIDSURTIDOR;
+END;
+
+PROCEDURE TSURBOMBA.setDESCRIPCION(pDESCRIPCION:String);
+BEGIN
+	aDESCRIPCION:= pDESCRIPCION;
+END;
+
+PROCEDURE TSURBOMBA.setIDESTACION(pIDESTACION:String);
+BEGIN
+	aIDESTACION:= pIDESTACION;
+END;
+
+PROCEDURE TSURBOMBA.setALIAS(pALIAS:String);
+BEGIN
+	aALIAS:= pALIAS;
+END;
+
+PROCEDURE TSURBOMBA.setPETROBOX(pPETROBOX:String);
+BEGIN
+	aPETROBOX:= pPETROBOX;
+END;
+
+PROCEDURE TSURBOMBA.setAFORADORVALORMAXIMOVOLUMEN(pAFORADORVALORMAXIMOVOLUMEN:Double);
+BEGIN
+	aAFORADORVALORMAXIMOVOLUMEN:= pAFORADORVALORMAXIMOVOLUMEN;
+END;
+
+
+FUNCTION TSURBOMBA.getIDSURTIDOR	:String;
+BEGIN
+	RESULT := aIDSURTIDOR;
+END;
+
+FUNCTION TSURBOMBA.getDESCRIPCION	:String;
+BEGIN
+	RESULT := aDESCRIPCION;
+END;
+
+FUNCTION TSURBOMBA.getIDESTACION	:String;
+BEGIN
+	RESULT := aIDESTACION;
+END;
+
+FUNCTION TSURBOMBA.getALIAS	:String;
+BEGIN
+	RESULT := aALIAS;
+END;
+
+FUNCTION TSURBOMBA.getPETROBOX	:String;
+BEGIN
+	RESULT := aPETROBOX;
+END;
+
+FUNCTION TSURBOMBA.getAFORADORVALORMAXIMOVOLUMEN	:Double;
+BEGIN
+	RESULT := aAFORADORVALORMAXIMOVOLUMEN;
+END;
+
+
+END.
+

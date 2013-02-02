@@ -1,0 +1,501 @@
+UNIT UclasSURMANGUERA;
+
+{
+GENERADO AUTOMATICAMENTE POR "Generador v.2012"
+AUTOR              : HARWIN EDIL PEREZ SALINAS   [harwinedil@gmail.com]
+DESCRIPCION        : Clase para interactuar con la Tabla : SURMANGUERA
+FECHA CREACION     : 06/12/2012 Hora: 01:43:58
+ULTIMA MODIFICACION: 06/12/2012 Hora: 01:43:58
+MODIFICADO POR     : HARWIN EDIL PEREZ SALINAS
+OBSERVACIONES      :
+
+}
+
+INTERFACE
+
+USES
+  sysUtils,uLkJSON,AstaDrv2,AstaClientDataset,AstaParamList,UBaseObject,Uconstantes,
+  forms, classes,UGralUtilidades,UclasSYSUSER,DBCtrls,SUIDBCtrls;
+
+
+TYPE
+	PSURMANGUERA = ^TSURMANGUERA;
+	TSURMANGUERA = CLASS(TBaseObject)
+	PRIVATE
+		aID                 	: String[22]; 
+		aDESCRIPCION        	: String[60]; 
+		aMECANICOVOLUMENDELTA	: Double; 
+		aALIAS_MANGUERA     	: Integer; 
+		aIDPRODUCTO         	: Integer; 
+		aIDSURTIDOR         	: String[22];
+		aIDTANQUE           	: String[22];
+	PUBLIC
+		CONSTRUCTOR     Create;		OVERLOAD;
+		CONSTRUCTOR     Create(pID:String; pDESCRIPCION:String; pMECANICOVOLUMENDELTA:Double; pALIAS_MANGUERA:Integer; pIDPRODUCTO:Integer; pIDSURTIDOR:String; pIDTANQUE:String); OVERLOAD;
+		CONSTRUCTOR     Create(const pObjeto:TSURMANGUERA);OVERLOAD;
+		DESTRUCTOR      Destroy;	OVERRIDE;
+		PROCEDURE       init;		OVERRIDE;
+		PROCEDURE       setAtributos(pID:String; pDESCRIPCION:String; pMECANICOVOLUMENDELTA:Double; pALIAS_MANGUERA:Integer; pIDPRODUCTO:Integer; pIDSURTIDOR:String; pIDTANQUE:String);		
+
+		PROCEDURE       fromJson(o:TlkJSONobject); OVERRIDE;
+		PROCEDURE       fromJsonString(s:string);  OVERRIDE;
+		FUNCTION        toJsonString : string; OVERRIDE;
+		FUNCTION        sqlGetField(field:string) : string; OVERRIDE;
+		FUNCTION        sqlGetKeyValue(key,value : string) : string; OVERRIDE;
+		FUNCTION        sqlGetAll : string; OVERRIDE;
+		PROCEDURE       QBE( columns,where :string ; ClientDS: TAstaClientDataSet; params:TAstaParamList=NIL); OVERLOAD;OVERRIDE;
+		PROCEDURE       filtrar(cds:TAstaClientDataSet; where:string = ''; params:TAstaParamList=NIL); OVERRIDE;
+		PROCEDURE       QBE(ClientDS: TAstaClientDataSet; where:string = '';params:TAstaParamList=NIL);  OVERLOAD;OVERRIDE;
+
+		FUNCTION        save(ClientDS: TAstaClientDataSet; transacction: byte) : byte; OVERRIDE;
+		FUNCTION        exist(ClientDS: TAstaClientDataSet) : boolean;OVERRIDE;
+		PROCEDURE       fromClientDataSet(ClientDS: TAstaClientDataSet);OVERRIDE;
+		PROCEDURE       fromGUI(form:TForm ); OVERRIDE;
+		PROCEDURE       toGUI(form:TForm ); OVERRIDE;
+		PROCEDURE       nextID(ClientDS: TAstaClientDataSet); OVERRIDE;
+
+		PROCEDURE   	setID(pID:String);
+		PROCEDURE   	setDESCRIPCION(pDESCRIPCION:String);
+		PROCEDURE   	setMECANICOVOLUMENDELTA(pMECANICOVOLUMENDELTA:Double);
+		PROCEDURE   	setALIAS_MANGUERA(pALIAS_MANGUERA:Integer);
+		PROCEDURE   	setIDPRODUCTO(pIDPRODUCTO:Integer);
+		PROCEDURE   	setIDSURTIDOR(pIDSURTIDOR:String);
+		PROCEDURE   	setIDTANQUE(pIDTANQUE:String);
+
+		FUNCTION    	getID                   	:String;
+		FUNCTION    	getDESCRIPCION          	:String;
+		FUNCTION    	getMECANICOVOLUMENDELTA 	:Double;
+		FUNCTION    	getALIAS_MANGUERA       	:Integer;
+		FUNCTION    	getIDPRODUCTO           	:Integer;
+		FUNCTION    	getIDSURTIDOR           	:String;
+		FUNCTION    	getIDTANQUE             	:String;
+
+		PROPERTY    	ID                    : String    	read getID                   	write setID                   ;
+		PROPERTY    	DESCRIPCION           : String    	read getDESCRIPCION          	write setDESCRIPCION          ;
+		PROPERTY    	MECANICOVOLUMENDELTA  : Double    	read getMECANICOVOLUMENDELTA 	write setMECANICOVOLUMENDELTA ;
+		PROPERTY    	ALIAS_MANGUERA        : Integer   	read getALIAS_MANGUERA       	write setALIAS_MANGUERA       ;
+		PROPERTY    	IDPRODUCTO            : Integer   	read getIDPRODUCTO           	write setIDPRODUCTO           ;
+		PROPERTY    	IDSURTIDOR            : String    	read getIDSURTIDOR           	write setIDSURTIDOR           ;
+		PROPERTY    	IDTANQUE              : String    	read getIDTANQUE             	write setIDTANQUE             ;
+
+		
+	END;
+
+IMPLEMENTATION
+
+uses DB;
+{TSURMANGUERA}
+
+CONSTRUCTOR TSURMANGUERA.Create;
+BEGIN
+	aID                  := '';
+	aDESCRIPCION         := '';
+	aMECANICOVOLUMENDELTA:= 0;
+	aALIAS_MANGUERA      := 0;
+	aIDPRODUCTO          := 0;
+	aIDSURTIDOR          := '';
+	aIDTANQUE            := '';	
+	autocommit := true;												
+END;
+
+CONSTRUCTOR TSURMANGUERA.Create(pID:String; pDESCRIPCION:String; pMECANICOVOLUMENDELTA:Double; pALIAS_MANGUERA:Integer; pIDPRODUCTO:Integer; pIDSURTIDOR:String; pIDTANQUE:String);
+BEGIN
+	aID                  := pID                  ;
+	aDESCRIPCION         := pDESCRIPCION         ;
+	aMECANICOVOLUMENDELTA:= pMECANICOVOLUMENDELTA;
+	aALIAS_MANGUERA      := pALIAS_MANGUERA      ;
+	aIDPRODUCTO          := pIDPRODUCTO          ;
+	aIDSURTIDOR          := pIDSURTIDOR          ;
+	aIDTANQUE            := pIDTANQUE            ;
+	autocommit := true;
+END;
+
+CONSTRUCTOR TSURMANGUERA.Create(const pObjeto:TSURMANGUERA);
+BEGIN
+	aID                  := pObjeto.ID                  ;
+	aDESCRIPCION         := pObjeto.DESCRIPCION         ;
+	aMECANICOVOLUMENDELTA:= pObjeto.MECANICOVOLUMENDELTA;
+	aALIAS_MANGUERA      := pObjeto.ALIAS_MANGUERA      ;
+	aIDPRODUCTO          := pObjeto.IDPRODUCTO          ;
+	aIDSURTIDOR          := pObjeto.IDSURTIDOR          ;
+	aIDTANQUE            := pObjeto.IDTANQUE            ;
+	autocommit := pObjeto.autocommit;
+END;
+
+DESTRUCTOR TSURMANGUERA.Destroy;
+BEGIN
+	
+	inherited Destroy;
+END;
+
+PROCEDURE TSURMANGUERA.init;
+BEGIN
+	aID                  := '';
+	aDESCRIPCION         := '';
+	aMECANICOVOLUMENDELTA:= 0;
+	aALIAS_MANGUERA      := 0;
+	aIDPRODUCTO          := 0;
+	aIDSURTIDOR          := '';
+	aIDTANQUE            := '';														
+END;
+
+PROCEDURE TSURMANGUERA.fromJsonString(s:string);
+BEGIN
+	self.fromJson(TlkJSON.ParseText(s) as TlkJSONobject);
+END;
+
+PROCEDURE TSURMANGUERA.fromJson(o:TlkJSONobject);
+BEGIN
+	ID                   := (o.Field['ID'] as TlkJSONstring).Value;
+	DESCRIPCION          := (o.Field['DESCRIPCION'] as TlkJSONstring).Value;
+	MECANICOVOLUMENDELTA := (o.Field['MECANICOVOLUMENDELTA'] as TlkJSONnumber).Value;
+	ALIAS_MANGUERA       := (o.Field['ALIAS_MANGUERA'] as TlkJSONnumber).Value;
+	IDPRODUCTO           := (o.Field['IDPRODUCTO'] as TlkJSONnumber).Value;
+	IDSURTIDOR           := (o.Field['IDSURTIDOR'] as TlkJSONstring).Value;
+	IDTANQUE             := (o.Field['IDTANQUE'] as TlkJSONstring).Value;
+END;
+
+FUNCTION TSURMANGUERA.toJsonString : string;
+var  json : TlkJSONobject;
+BEGIN
+	json := TlkJSONobject.Create();
+	TRY	
+		json.Add('ID',TlkJSONstring.Generate(ID));
+		json.Add('DESCRIPCION',TlkJSONstring.Generate(DESCRIPCION));
+		json.Add('MECANICOVOLUMENDELTA',TlkJSONNumber.Generate(MECANICOVOLUMENDELTA));
+		json.Add('ALIAS_MANGUERA',TlkJSONNumber.Generate(ALIAS_MANGUERA));
+		json.Add('IDPRODUCTO',TlkJSONNumber.Generate(IDPRODUCTO));
+		json.Add('IDSURTIDOR',TlkJSONstring.Generate(IDSURTIDOR));
+		json.Add('IDTANQUE',TlkJSONstring.Generate(IDTANQUE));
+	FINALLY
+		RESULT := TlkJSON.GenerateText(json);
+		FreeAndNIL(json);
+	END;
+END;
+
+
+PROCEDURE TSURMANGUERA.setAtributos(pID:String; pDESCRIPCION:String; pMECANICOVOLUMENDELTA:Double; pALIAS_MANGUERA:Integer; pIDPRODUCTO:Integer; pIDSURTIDOR:String; pIDTANQUE:String);
+BEGIN
+	aID                  := pID                  ;
+	aDESCRIPCION         := pDESCRIPCION         ;
+	aMECANICOVOLUMENDELTA:= pMECANICOVOLUMENDELTA;
+	aALIAS_MANGUERA      := pALIAS_MANGUERA      ;
+	aIDPRODUCTO          := pIDPRODUCTO          ;
+	aIDSURTIDOR          := pIDSURTIDOR          ;
+	aIDTANQUE            := pIDTANQUE            ;	
+END;
+
+FUNCTION TSURMANGUERA.sqlGetField(field:string) : string;
+BEGIN
+	RESULT := 'select '+field+' from SURMANGUERA order by '+field;
+END;
+
+FUNCTION TSURMANGUERA.sqlGetKeyValue(key,value : string) : string;
+BEGIN
+	RESULT := 'select '+key+' as key,'+value+'as value from SURMANGUERA order by '+value;
+END;
+
+FUNCTION  TSURMANGUERA.sqlGetAll : string;
+BEGIN
+	RESULT := 'select * from SURMANGUERA';
+END;
+
+PROCEDURE TSURMANGUERA.filtrar(cds:TAstaClientDataSet; where:string = ''; params:TAstaParamList=NIL);
+var  	y : string;
+	i : word;
+BEGIN
+	y := ' where ';
+	IF SELF.ID<>'' THEN
+	BEGIN
+		cds.sql.add( y +'ID= :pID');
+		cds.ParamByName('pID').asString	:= SELF.ID;
+		y := ' and ';
+	END;
+
+	IF SELF.DESCRIPCION<>'' THEN
+	BEGIN
+		cds.sql.add( y +'DESCRIPCION= :pDESCRIPCION');
+		cds.ParamByName('pDESCRIPCION').asString	:= SELF.DESCRIPCION;
+		y := ' and ';
+	END;
+
+	IF SELF.MECANICOVOLUMENDELTA<>0 THEN
+	BEGIN
+		cds.sql.add( y +'MECANICOVOLUMENDELTA= :pMECANICOVOLUMENDELTA');
+		cds.ParamByName('pMECANICOVOLUMENDELTA').AsFloat	:= SELF.MECANICOVOLUMENDELTA;
+		y := ' and ';
+	END;
+
+	IF SELF.ALIAS_MANGUERA<>0 THEN
+	BEGIN
+		cds.sql.add( y +'ALIAS_MANGUERA= :pALIAS_MANGUERA');
+		cds.ParamByName('pALIAS_MANGUERA').asInteger	:= SELF.ALIAS_MANGUERA;
+		y := ' and ';
+	END;
+
+	IF SELF.IDPRODUCTO<>0 THEN
+	BEGIN
+		cds.sql.add( y +'IDPRODUCTO= :pIDPRODUCTO');
+		cds.ParamByName('pIDPRODUCTO').asInteger	:= SELF.IDPRODUCTO;
+		y := ' and ';
+	END;
+
+	IF SELF.IDSURTIDOR<>'' THEN
+	BEGIN
+		cds.sql.add( y +'IDSURTIDOR= :pIDSURTIDOR');
+		cds.ParamByName('pIDSURTIDOR').asString	:= SELF.IDSURTIDOR;
+		y := ' and ';
+	END;
+{
+	IF SELF.IDTANQUE<>'' THEN
+	BEGIN
+		cds.sql.add( y +'IDTANQUE= :pIDTANQUE');
+		cds.ParamByName('pIDTANQUE').asString	:= SELF.IDTANQUE;
+		y := ' and ';
+	END;
+ }
+
+	if where <> '' then
+	begin
+	cds.sql.add(where);
+	for i:=0 to params.count-1 do
+		cds.params.AddOneParamItem(params.items[i]);
+	end;
+END;
+
+
+PROCEDURE TSURMANGUERA.QBE(ClientDS: TAstaClientDataSet; where:string = ''; params:TAstaParamList=NIL);
+BEGIN
+	initDataSet(ClientDS);
+	clientDS.sql.add(sqlGetAll);
+	filtrar(ClientDS,where,params);
+	clientDS.prepare;
+	clientDS.Open;
+END;
+
+PROCEDURE TSURMANGUERA.QBE(columns,where :string ; ClientDS: TAstaClientDataSet; params:TAstaParamList=NIL);
+BEGIN
+	initDataSet(ClientDS);
+	clientDS.sql.add('select '+columns+ ' from SURMANGUERA');
+	ClientDS.SQL.Add('where '+where);
+
+	if params <> NIL then
+		ClientDS.Params := params;
+
+	clientDS.prepare;
+	clientDS.Open;
+END;
+
+function TSURMANGUERA.exist(ClientDS: TAstaClientDataSet): boolean;
+begin
+	initDataSet(ClientDS);
+	ClientDS.SQL.Add('select id from SURMANGUERA where ID=:pID');
+	ClientDS.ParamByName('pID').AsString := SELF.ID;
+	ClientDS.Open;
+
+	Result := not ClientDS.IsEmpty;
+end;
+
+procedure TSURMANGUERA.fromClientDataSet(ClientDS: TAstaClientDataSet);
+begin
+	inherited;
+	IF NOT ClientDS.Active THEN EXIT;
+	SELF.ID                   := clientDS.FieldByName('ID').AsString;
+	SELF.DESCRIPCION          := clientDS.FieldByName('DESCRIPCION').AsString;
+	SELF.MECANICOVOLUMENDELTA := clientDS.FieldByName('MECANICOVOLUMENDELTA').AsFloat;
+	SELF.ALIAS_MANGUERA       := clientDS.FieldByName('ALIAS_MANGUERA').AsInteger;
+	SELF.IDPRODUCTO           := clientDS.FieldByName('IDPRODUCTO').AsInteger;
+	SELF.IDSURTIDOR           := clientDS.FieldByName('IDSURTIDOR').AsString;
+	SELF.IDTANQUE             := clientDS.FieldByName('IDTANQUE').AsString;
+end;
+
+
+procedure TSURMANGUERA.fromGUI(form: TForm);
+begin
+	with form do
+	begin
+{		SELF.ID                  := utils.formObtenerPropiedad(FindComponent('cID'),'Text');
+		SELF.DESCRIPCION         := utils.formObtenerPropiedad(FindComponent('cDESCRIPCION'),'Text');
+		SELF.MECANICOVOLUMENDELTA:= utils.formObtenerPropiedad(FindComponent('cMECANICOVOLUMENDELTA'),'Text');
+		SELF.ALIAS_MANGUERA      := utils.formObtenerPropiedad(FindComponent('cALIAS_MANGUERA'),'Text');
+		SELF.IDPRODUCTO          := utils.formObtenerPropiedad(FindComponent('cIDPRODUCTO'),'Text');
+		SELF.IDSURTIDOR          := utils.formObtenerPropiedad(FindComponent('cIDSURTIDOR'),'Text');
+		SELF.IDTANQUE            := utils.formObtenerPropiedad(FindComponent('cIDTANQUE'),'Text');
+}
+	end;
+end;
+
+procedure TSURMANGUERA.toGUI(form: TForm);
+begin
+	inherited;
+	with form do
+	begin
+{	utils.formAsignaPropiedad(FindComponent('cID'),'Text', (SELF.ID));
+	utils.formAsignaPropiedad(FindComponent('cDESCRIPCION'),'Text', (SELF.DESCRIPCION));
+	utils.formAsignaPropiedad(FindComponent('cMECANICOVOLUMENDELTA'),'Text', IntTOStr(SELF.MECANICOVOLUMENDELTA));
+	utils.formAsignaPropiedad(FindComponent('cALIAS_MANGUERA'),'Text', IntTOStr(SELF.ALIAS_MANGUERA));
+	utils.formAsignaPropiedad(FindComponent('cIDPRODUCTO'),'Text', IntTOStr(SELF.IDPRODUCTO));
+	utils.formAsignaPropiedad(FindComponent('cIDSURTIDOR'),'Text', (SELF.IDSURTIDOR));
+	utils.formAsignaPropiedad(FindComponent('cIDTANQUE'),'Text', (SELF.IDTANQUE));
+	}
+	end;
+end;
+
+function TSURMANGUERA.save(ClientDS: TAstaClientDataSet;transacction: byte): byte;
+var   date : TDateTime;
+begin
+	RESULT := cFalse;
+//	date := self.getFechaHoraServer(ClientDS);
+	initDataSet(ClientDS);
+
+//	if autocommit then
+//		ClientDS.AstaClientSocket.StartTransaction;
+
+	 TRY
+
+	case transacction of
+
+	1 : begin         //update
+		ClientDS.SQL.Add('UPDATE SURMANGUERA SET '+
+				'DESCRIPCION = :pDESCRIPCION'+
+				',MECANICOVOLUMENDELTA = :pMECANICOVOLUMENDELTA'+
+				',ALIAS_MANGUERA = :pALIAS_MANGUERA'+
+				',IDPRODUCTO = :pIDPRODUCTO'+
+				',IDSURTIDOR = :pIDSURTIDOR'+
+				',IDTANQUE = :pIDTANQUE'+
+				' WHERE ID = :pID'
+		);
+		ClientDS.ParamByName('pID').asString                          := SELF.ID;
+		ClientDS.ParamByName('pDESCRIPCION').asString                 := SELF.DESCRIPCION;
+		ClientDS.ParamByName('pMECANICOVOLUMENDELTA').AsFloat         := SELF.MECANICOVOLUMENDELTA;
+		ClientDS.ParamByName('pALIAS_MANGUERA').asInteger             := SELF.ALIAS_MANGUERA;
+		ClientDS.ParamByName('pIDPRODUCTO').asInteger                 := SELF.IDPRODUCTO;
+		ClientDS.ParamByName('pIDSURTIDOR').asString                  := SELF.IDSURTIDOR;
+		ClientDS.ParamByName('pIDTANQUE').asString                    := SELF.IDTANQUE;
+	end;
+
+	0: begin	//insert
+		SELF.nextID(clientDS);
+
+		initDataSet(ClientDS);
+		ClientDS.SQL.Add('INSERT INTO SURMANGUERA (ID,DESCRIPCION,MECANICOVOLUMENDELTA,ALIAS_MANGUERA,IDPRODUCTO,IDSURTIDOR,IDTANQUE)');
+		ClientDS.SQL.Add(' VALUES ');
+		ClientDS.SQL.Add('(:pID,:pDESCRIPCION,:pMECANICOVOLUMENDELTA,:pALIAS_MANGUERA,:pIDPRODUCTO,:pIDSURTIDOR,:pIDTANQUE)');
+		ClientDS.ParamByName('pID').asString                          := SELF.ID;
+		ClientDS.ParamByName('pDESCRIPCION').asString                 := SELF.DESCRIPCION;
+		ClientDS.ParamByName('pMECANICOVOLUMENDELTA').AsFloat         := SELF.MECANICOVOLUMENDELTA;
+		ClientDS.ParamByName('pALIAS_MANGUERA').asInteger             := SELF.ALIAS_MANGUERA;
+		ClientDS.ParamByName('pIDPRODUCTO').asInteger                 := SELF.IDPRODUCTO;
+		ClientDS.ParamByName('pIDSURTIDOR').asString                  := SELF.IDSURTIDOR;
+		ClientDS.ParamByName('pIDTANQUE').asString                    := SELF.IDTANQUE;
+	end;
+
+	2: begin //delete
+		ClientDS.SQL.Add('delete from SURMANGUERA where id =:pid');
+		ClientDS.ParamByName('pID').AsString := SELF.ID;
+	end;
+
+	4: begin //enable
+		ClientDS.SQL.Add('update SURMANGUERA set status=:pstatus where id =:pid');
+		ClientDS.ParamByName('pID').AsString    := SELF.ID;
+		ClientDS.ParamByName('pstatus').asString := '1';
+	end;
+
+	5: begin //disable
+		ClientDS.SQL.Add('update SURMANGUERA set status=:pstatus where id =:pid');
+		ClientDS.ParamByName('pID').AsString    := SELF.ID;
+		ClientDS.ParamByName('pstatus').asString := '0';
+	end;
+
+	end;
+	if autocommit then
+		ClientDS.AstaClientSocket.StartTransaction;
+
+	ClientDS.ExecSQL;
+	Result := cTrue;
+
+	 FINALLY
+	if autocommit then
+			ClientDS.AstaClientSocket.EndTransaction(true);
+	 END;
+end;
+
+procedure TSURMANGUERA.nextID(ClientDS: TAstaClientDataSet);
+begin
+end;
+
+
+PROCEDURE TSURMANGUERA.setID(pID:String);
+BEGIN
+	aID:= pID;
+END;
+
+PROCEDURE TSURMANGUERA.setDESCRIPCION(pDESCRIPCION:String);
+BEGIN
+	aDESCRIPCION:= pDESCRIPCION;
+END;
+
+PROCEDURE TSURMANGUERA.setMECANICOVOLUMENDELTA(pMECANICOVOLUMENDELTA:Double);
+BEGIN
+	aMECANICOVOLUMENDELTA:= pMECANICOVOLUMENDELTA;
+END;
+
+PROCEDURE TSURMANGUERA.setALIAS_MANGUERA(pALIAS_MANGUERA:Integer);
+BEGIN
+	aALIAS_MANGUERA:= pALIAS_MANGUERA;
+END;
+
+PROCEDURE TSURMANGUERA.setIDPRODUCTO(pIDPRODUCTO:Integer);
+BEGIN
+	aIDPRODUCTO:= pIDPRODUCTO;
+END;
+
+PROCEDURE TSURMANGUERA.setIDSURTIDOR(pIDSURTIDOR:String);
+BEGIN
+	aIDSURTIDOR:= pIDSURTIDOR;
+END;
+
+PROCEDURE TSURMANGUERA.setIDTANQUE(pIDTANQUE:String);
+BEGIN
+	aIDTANQUE:= pIDTANQUE;
+END;
+
+
+FUNCTION TSURMANGUERA.getID	:String;
+BEGIN
+	RESULT := aID;
+END;
+
+FUNCTION TSURMANGUERA.getDESCRIPCION	:String;
+BEGIN
+	RESULT := aDESCRIPCION;
+END;
+
+FUNCTION TSURMANGUERA.getMECANICOVOLUMENDELTA	:Double;
+BEGIN
+	RESULT := aMECANICOVOLUMENDELTA;
+END;
+
+FUNCTION TSURMANGUERA.getALIAS_MANGUERA	:Integer;
+BEGIN
+	RESULT := aALIAS_MANGUERA;
+END;
+
+FUNCTION TSURMANGUERA.getIDPRODUCTO	:Integer;
+BEGIN
+	RESULT := aIDPRODUCTO;
+END;
+
+FUNCTION TSURMANGUERA.getIDSURTIDOR	:String;
+BEGIN
+	RESULT := aIDSURTIDOR;
+END;
+
+FUNCTION TSURMANGUERA.getIDTANQUE	:String;
+BEGIN
+	RESULT := aIDTANQUE;
+END;
+
+
+END.
+

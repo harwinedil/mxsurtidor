@@ -1,0 +1,497 @@
+UNIT UclasSURPRODUCTO;
+
+{
+GENERADO AUTOMATICAMENTE POR "Generador v.2012"
+AUTOR              : HARWIN EDIL PEREZ SALINAS   [harwinedil@gmail.com]
+DESCRIPCION        : Clase para interactuar con la Tabla : SURPRODUCTO
+FECHA CREACION     : 06/12/2012 Hora: 02:06:03
+ULTIMA MODIFICACION: 06/12/2012 Hora: 02:06:03
+MODIFICADO POR     : HARWIN EDIL PEREZ SALINAS
+OBSERVACIONES      :
+
+}
+
+INTERFACE
+
+USES
+  sysUtils,uLkJSON,AstaDrv2,AstaClientDataset,AstaParamList,UBaseObject,Uconstantes,
+  forms, classes,UGralUtilidades,UclasSYSUSER,DBCtrls,SUIDBCtrls;
+
+
+TYPE
+	PSURPRODUCTO = ^TSURPRODUCTO;
+	TSURPRODUCTO = CLASS(TBaseObject)
+	PRIVATE
+		aID           	: Integer; 
+		aDESCRIPCION  	: String[30]; 
+		aABREV        	: String[3]; 
+		aALIAS        	: Integer; 
+		aPRECIO       	: Double; 
+		aIDUNIDAD     	: Integer; 
+		aPRECIOTERCEROS	: Double;
+	PUBLIC
+		CONSTRUCTOR     Create;		OVERLOAD;
+		CONSTRUCTOR     Create(pID:Integer; pDESCRIPCION:String; pABREV:String; pALIAS:Integer; pPRECIO:Double; pIDUNIDAD:Integer; pPRECIOTERCEROS:Double); OVERLOAD;
+		CONSTRUCTOR     Create(const pObjeto:TSURPRODUCTO);OVERLOAD;
+		DESTRUCTOR      Destroy;	OVERRIDE;
+		PROCEDURE       init;		OVERRIDE;
+		PROCEDURE       setAtributos(pID:Integer; pDESCRIPCION:String; pABREV:String; pALIAS:Integer; pPRECIO:Double; pIDUNIDAD:Integer; pPRECIOTERCEROS:Double);		
+
+		PROCEDURE       fromJson(o:TlkJSONobject); OVERRIDE;
+		PROCEDURE       fromJsonString(s:string);  OVERRIDE;
+		FUNCTION        toJsonString : string; OVERRIDE;
+		FUNCTION        sqlGetField(field:string) : string; OVERRIDE;
+		FUNCTION        sqlGetKeyValue(key,value : string) : string; OVERRIDE;
+		FUNCTION        sqlGetAll : string; OVERRIDE;
+		PROCEDURE       QBE( columns,where :string ; ClientDS: TAstaClientDataSet; params:TAstaParamList=NIL); OVERLOAD;OVERRIDE;
+		PROCEDURE       filtrar(cds:TAstaClientDataSet; where:string = ''; params:TAstaParamList=NIL); OVERRIDE;
+		PROCEDURE       QBE(ClientDS: TAstaClientDataSet; where:string = '';params:TAstaParamList=NIL);  OVERLOAD;OVERRIDE;
+
+		FUNCTION        save(ClientDS: TAstaClientDataSet; transacction: byte) : byte; OVERRIDE;
+		FUNCTION        exist(ClientDS: TAstaClientDataSet) : boolean;OVERRIDE;
+		PROCEDURE       fromClientDataSet(ClientDS: TAstaClientDataSet);OVERRIDE;
+		PROCEDURE       fromGUI(form:TForm ); OVERRIDE;
+		PROCEDURE       toGUI(form:TForm ); OVERRIDE;
+		PROCEDURE       nextID(ClientDS: TAstaClientDataSet); OVERRIDE;
+
+		PROCEDURE   	setID(pID:Integer);
+		PROCEDURE   	setDESCRIPCION(pDESCRIPCION:String);
+		PROCEDURE   	setABREV(pABREV:String);
+		PROCEDURE   	setALIAS(pALIAS:Integer);
+		PROCEDURE   	setPRECIO(pPRECIO:Double);
+		PROCEDURE   	setIDUNIDAD(pIDUNIDAD:Integer);
+		PROCEDURE   	setPRECIOTERCEROS(pPRECIOTERCEROS:Double);
+
+		FUNCTION    	getID             	:Integer;
+		FUNCTION    	getDESCRIPCION    	:String;
+		FUNCTION    	getABREV          	:String;
+		FUNCTION    	getALIAS          	:Integer;
+		FUNCTION    	getPRECIO         	:Double;
+		FUNCTION    	getIDUNIDAD       	:Integer;
+		FUNCTION    	getPRECIOTERCEROS 	:Double;
+
+		PROPERTY    	ID              : Integer   	read getID             	write setID             ;
+		PROPERTY    	DESCRIPCION     : String    	read getDESCRIPCION    	write setDESCRIPCION    ;
+		PROPERTY    	ABREV           : String    	read getABREV          	write setABREV          ;
+		PROPERTY    	ALIAS           : Integer   	read getALIAS          	write setALIAS          ;
+		PROPERTY    	PRECIO          : Double    	read getPRECIO         	write setPRECIO         ;
+		PROPERTY    	IDUNIDAD        : Integer   	read getIDUNIDAD       	write setIDUNIDAD       ;
+		PROPERTY    	PRECIOTERCEROS  : Double    	read getPRECIOTERCEROS 	write setPRECIOTERCEROS ;
+
+		
+	END;
+
+IMPLEMENTATION
+
+uses DB;
+{TSURPRODUCTO}
+
+CONSTRUCTOR TSURPRODUCTO.Create;
+BEGIN
+	aID            := 0;
+	aDESCRIPCION   := '';
+	aABREV         := '';
+	aALIAS         := 0;
+	aPRECIO        := 0;
+	aIDUNIDAD      := 0;
+	aPRECIOTERCEROS:= 0;	
+	autocommit := true;												
+END;
+
+CONSTRUCTOR TSURPRODUCTO.Create(pID:Integer; pDESCRIPCION:String; pABREV:String; pALIAS:Integer; pPRECIO:Double; pIDUNIDAD:Integer; pPRECIOTERCEROS:Double);
+BEGIN
+	aID            := pID            ;
+	aDESCRIPCION   := pDESCRIPCION   ;
+	aABREV         := pABREV         ;
+	aALIAS         := pALIAS         ;
+	aPRECIO        := pPRECIO        ;
+	aIDUNIDAD      := pIDUNIDAD      ;
+	aPRECIOTERCEROS:= pPRECIOTERCEROS;
+	autocommit := true;
+END;
+
+CONSTRUCTOR TSURPRODUCTO.Create(const pObjeto:TSURPRODUCTO);
+BEGIN
+	aID            := pObjeto.ID            ;
+	aDESCRIPCION   := pObjeto.DESCRIPCION   ;
+	aABREV         := pObjeto.ABREV         ;
+	aALIAS         := pObjeto.ALIAS         ;
+	aPRECIO        := pObjeto.PRECIO        ;
+	aIDUNIDAD      := pObjeto.IDUNIDAD      ;
+	aPRECIOTERCEROS:= pObjeto.PRECIOTERCEROS;
+	autocommit := pObjeto.autocommit;
+END;
+
+DESTRUCTOR TSURPRODUCTO.Destroy;
+BEGIN
+	
+	inherited Destroy;
+END;
+
+PROCEDURE TSURPRODUCTO.init;
+BEGIN
+	aID            := 0;
+	aDESCRIPCION   := '';
+	aABREV         := '';
+	aALIAS         := 0;
+	aPRECIO        := 0;
+	aIDUNIDAD      := 0;
+	aPRECIOTERCEROS:= 0;														
+END;
+
+PROCEDURE TSURPRODUCTO.fromJsonString(s:string);
+BEGIN
+	self.fromJson(TlkJSON.ParseText(s) as TlkJSONobject);
+END;
+
+PROCEDURE TSURPRODUCTO.fromJson(o:TlkJSONobject);
+BEGIN
+	ID             := (o.Field['ID'] as TlkJSONnumber).Value;
+	DESCRIPCION    := (o.Field['DESCRIPCION'] as TlkJSONstring).Value;
+	ABREV          := (o.Field['ABREV'] as TlkJSONstring).Value;
+	ALIAS          := (o.Field['ALIAS'] as TlkJSONnumber).Value;
+	PRECIO         := (o.Field['PRECIO'] as TlkJSONnumber).Value;
+	IDUNIDAD       := (o.Field['IDUNIDAD'] as TlkJSONnumber).Value;
+	PRECIOTERCEROS := (o.Field['PRECIOTERCEROS'] as TlkJSONnumber).Value;
+END;
+
+FUNCTION TSURPRODUCTO.toJsonString : string;
+var  json : TlkJSONobject;
+BEGIN
+	json := TlkJSONobject.Create();
+	TRY	
+		json.Add('ID',TlkJSONNumber.Generate(ID));
+		json.Add('DESCRIPCION',TlkJSONstring.Generate(DESCRIPCION));
+		json.Add('ABREV',TlkJSONstring.Generate(ABREV));
+		json.Add('ALIAS',TlkJSONNumber.Generate(ALIAS));
+		json.Add('PRECIO',TlkJSONNumber.Generate(PRECIO));
+		json.Add('IDUNIDAD',TlkJSONNumber.Generate(IDUNIDAD));
+		json.Add('PRECIOTERCEROS',TlkJSONNumber.Generate(PRECIOTERCEROS));
+	FINALLY
+		RESULT := TlkJSON.GenerateText(json);
+		FreeAndNIL(json);
+	END;
+END;
+
+
+PROCEDURE TSURPRODUCTO.setAtributos(pID:Integer; pDESCRIPCION:String; pABREV:String; pALIAS:Integer; pPRECIO:Double; pIDUNIDAD:Integer; pPRECIOTERCEROS:Double);		
+BEGIN
+	aID            := pID            ;
+	aDESCRIPCION   := pDESCRIPCION   ;
+	aABREV         := pABREV         ;
+	aALIAS         := pALIAS         ;
+	aPRECIO        := pPRECIO        ;
+	aIDUNIDAD      := pIDUNIDAD      ;
+	aPRECIOTERCEROS:= pPRECIOTERCEROS;	
+END;
+
+FUNCTION TSURPRODUCTO.sqlGetField(field:string) : string;
+BEGIN
+	RESULT := 'select '+field+' from SURPRODUCTO order by '+field;
+END;
+
+FUNCTION TSURPRODUCTO.sqlGetKeyValue(key,value : string) : string;
+BEGIN
+	RESULT := 'select '+key+' as key,'+value+'as value from SURPRODUCTO order by '+value;
+END;
+
+FUNCTION  TSURPRODUCTO.sqlGetAll : string;
+BEGIN
+	RESULT := 'select * from SURPRODUCTO';
+END;
+
+PROCEDURE TSURPRODUCTO.filtrar(cds:TAstaClientDataSet; where:string = ''; params:TAstaParamList=NIL);
+var  	y : string;
+	i : word;
+BEGIN
+	y := ' where ';
+	IF SELF.ID<>0 THEN
+	BEGIN
+		cds.sql.add( y +'ID= :pID');
+		cds.ParamByName('pID').asInteger	:= SELF.ID;
+		y := ' and ';
+	END;
+
+	IF SELF.DESCRIPCION<>'' THEN
+	BEGIN
+		cds.sql.add( y +'DESCRIPCION= :pDESCRIPCION');
+		cds.ParamByName('pDESCRIPCION').asString	:= SELF.DESCRIPCION;
+		y := ' and ';
+	END;
+
+	IF SELF.ABREV<>'' THEN
+	BEGIN
+		cds.sql.add( y +'ABREV= :pABREV');
+		cds.ParamByName('pABREV').asString	:= SELF.ABREV;
+		y := ' and ';
+	END;
+
+	IF SELF.ALIAS<>0 THEN
+	BEGIN
+		cds.sql.add( y +'ALIAS= :pALIAS');
+		cds.ParamByName('pALIAS').asInteger	:= SELF.ALIAS;
+		y := ' and ';
+	END;
+
+	IF SELF.PRECIO<>0 THEN
+	BEGIN
+		cds.sql.add( y +'PRECIO= :pPRECIO');
+		cds.ParamByName('pPRECIO').AsFloat	:= SELF.PRECIO;
+		y := ' and ';
+	END;
+
+	IF SELF.IDUNIDAD<>0 THEN
+	BEGIN
+		cds.sql.add( y +'IDUNIDAD= :pIDUNIDAD');
+		cds.ParamByName('pIDUNIDAD').asInteger	:= SELF.IDUNIDAD;
+		y := ' and ';
+	END;
+
+	IF SELF.PRECIOTERCEROS<>0 THEN
+	BEGIN
+		cds.sql.add( y +'PRECIOTERCEROS= :pPRECIOTERCEROS');
+		cds.ParamByName('pPRECIOTERCEROS').AsFloat	:= SELF.PRECIOTERCEROS;
+		y := ' and ';
+	END;
+
+
+	if where <> '' then
+	begin
+	cds.sql.add(where);
+	for i:=0 to params.count-1 do
+		cds.params.AddOneParamItem(params.items[i]);
+	end;
+END;
+
+
+PROCEDURE TSURPRODUCTO.QBE(ClientDS: TAstaClientDataSet; where:string = ''; params:TAstaParamList=NIL);
+BEGIN
+	initDataSet(ClientDS);
+	clientDS.sql.add(sqlGetAll);
+	filtrar(ClientDS,where,params);
+	clientDS.prepare;
+	clientDS.Open;
+END;
+
+PROCEDURE TSURPRODUCTO.QBE(columns,where :string ; ClientDS: TAstaClientDataSet; params:TAstaParamList=NIL);
+BEGIN
+	initDataSet(ClientDS);
+	clientDS.sql.add('select '+columns+ ' from SURPRODUCTO');
+	ClientDS.SQL.Add('where '+where);
+
+	if params <> NIL then
+		ClientDS.Params := params;
+
+	clientDS.prepare;
+	clientDS.Open;
+END;
+
+function TSURPRODUCTO.exist(ClientDS: TAstaClientDataSet): boolean;
+begin
+	initDataSet(ClientDS);
+	ClientDS.SQL.Add('select id from SURPRODUCTO where ID=:pID');
+	ClientDS.ParamByName('pID').AsInteger := SELF.ID;
+	ClientDS.Open;
+
+	Result := not ClientDS.IsEmpty;
+end;
+
+procedure TSURPRODUCTO.fromClientDataSet(ClientDS: TAstaClientDataSet);
+begin
+	inherited;
+	IF NOT ClientDS.Active THEN EXIT;
+	SELF.ID             := clientDS.FieldByName('ID').AsInteger;
+	SELF.DESCRIPCION    := clientDS.FieldByName('DESCRIPCION').AsString;
+	SELF.ABREV          := clientDS.FieldByName('ABREV').AsString;
+	SELF.ALIAS          := clientDS.FieldByName('ALIAS').AsInteger;
+	SELF.PRECIO         := clientDS.FieldByName('PRECIO').AsFloat;
+	SELF.IDUNIDAD       := clientDS.FieldByName('IDUNIDAD').AsInteger;
+	SELF.PRECIOTERCEROS := clientDS.FieldByName('PRECIOTERCEROS').AsFloat;
+end;
+
+
+procedure TSURPRODUCTO.fromGUI(form: TForm);
+begin
+	with form do
+	begin
+{		SELF.ID            := utils.formObtenerPropiedad(FindComponent('cID'),'Text');
+		SELF.DESCRIPCION   := utils.formObtenerPropiedad(FindComponent('cDESCRIPCION'),'Text');
+		SELF.ABREV         := utils.formObtenerPropiedad(FindComponent('cABREV'),'Text');
+		SELF.ALIAS         := utils.formObtenerPropiedad(FindComponent('cALIAS'),'Text');
+		SELF.PRECIO        := utils.formObtenerPropiedad(FindComponent('cPRECIO'),'Text');
+		SELF.IDUNIDAD      := utils.formObtenerPropiedad(FindComponent('cIDUNIDAD'),'Text');
+		SELF.PRECIOTERCEROS:= utils.formObtenerPropiedad(FindComponent('cPRECIOTERCEROS'),'Text');
+		}
+	end;
+end;
+
+procedure TSURPRODUCTO.toGUI(form: TForm);
+begin
+	inherited;
+	with form do
+	begin
+{	utils.formAsignaPropiedad(FindComponent('cID'),'Text', IntTOStr(SELF.ID));
+	utils.formAsignaPropiedad(FindComponent('cDESCRIPCION'),'Text', (SELF.DESCRIPCION));
+	utils.formAsignaPropiedad(FindComponent('cABREV'),'Text', (SELF.ABREV));
+	utils.formAsignaPropiedad(FindComponent('cALIAS'),'Text', IntTOStr(SELF.ALIAS));
+	utils.formAsignaPropiedad(FindComponent('cPRECIO'),'Text', IntTOStr(SELF.PRECIO));
+	utils.formAsignaPropiedad(FindComponent('cIDUNIDAD'),'Text', IntTOStr(SELF.IDUNIDAD));
+	utils.formAsignaPropiedad(FindComponent('cPRECIOTERCEROS'),'Text', IntTOStr(SELF.PRECIOTERCEROS));
+	}
+	end;
+end;
+
+function TSURPRODUCTO.save(ClientDS: TAstaClientDataSet;transacction: byte): byte;
+//var   date : TDateTime;
+begin
+	RESULT := cFalse;
+//	date := self.getFechaHoraServer(ClientDS);
+	initDataSet(ClientDS);
+
+//	if autocommit then
+//		ClientDS.AstaClientSocket.StartTransaction;
+
+	 TRY
+
+	case transacction of
+
+	1 : begin         //update
+		ClientDS.SQL.Add('UPDATE SURPRODUCTO SET '+
+				' DESCRIPCION = :pDESCRIPCION'+
+				',PRECIO = :pPRECIO'+
+				',IDUNIDAD = :pIDUNIDAD'+
+				',PRECIOTERCEROS = :pPRECIOTERCEROS'+
+				' WHERE ID = :pID'
+		);
+		ClientDS.ParamByName('pID').asInteger                   := SELF.ID;
+		ClientDS.ParamByName('pDESCRIPCION').asString           := SELF.DESCRIPCION;
+		ClientDS.ParamByName('pPRECIO').AsFloat                := SELF.PRECIO;
+		ClientDS.ParamByName('pIDUNIDAD').asInteger             := SELF.IDUNIDAD;
+		ClientDS.ParamByName('pPRECIOTERCEROS').AsFloat        := SELF.PRECIOTERCEROS;
+	end;
+
+	0: begin	//insert
+		SELF.nextID(clientDS);
+
+		initDataSet(ClientDS);
+		ClientDS.SQL.Add('INSERT INTO SURPRODUCTO (ID,DESCRIPCION,ABREV,ALIAS,PRECIO,IDUNIDAD,PRECIOTERCEROS)');
+		ClientDS.SQL.Add(' VALUES ');
+		ClientDS.SQL.Add('(:pID,:pDESCRIPCION,:pABREV,:pALIAS,:pPRECIO,:pIDUNIDAD,:pPRECIOTERCEROS)');
+		ClientDS.ParamByName('pID').asInteger                   := SELF.ID;
+		ClientDS.ParamByName('pDESCRIPCION').asString           := SELF.DESCRIPCION;
+		ClientDS.ParamByName('pABREV').asString                 := SELF.ABREV;
+		ClientDS.ParamByName('pALIAS').asInteger                := SELF.ALIAS;
+		ClientDS.ParamByName('pPRECIO').AsFloat                := SELF.PRECIO;
+		ClientDS.ParamByName('pIDUNIDAD').asInteger             := SELF.IDUNIDAD;
+		ClientDS.ParamByName('pPRECIOTERCEROS').AsFloat        := SELF.PRECIOTERCEROS;
+	end;
+
+	2: begin //delete
+		ClientDS.SQL.Add('delete from SURPRODUCTO where id =:pid');
+		ClientDS.ParamByName('pID').asInteger := SELF.ID;
+	end;
+
+	4: begin //enable
+		ClientDS.SQL.Add('update SURPRODUCTO set status=:pstatus where id =:pid');
+		ClientDS.ParamByName('pID').asInteger    := SELF.ID;
+		ClientDS.ParamByName('pstatus').asString := '1';
+	end;
+
+	5: begin //disable
+		ClientDS.SQL.Add('update SURPRODUCTO set status=:pstatus where id =:pid');
+		ClientDS.ParamByName('pID').asInteger    := SELF.ID;
+		ClientDS.ParamByName('pstatus').asString := '0';
+	end;
+
+	end;
+	if autocommit then
+		ClientDS.AstaClientSocket.StartTransaction;
+
+	ClientDS.ExecSQL;
+	Result := cTrue;
+
+	 FINALLY
+	if autocommit then
+			ClientDS.AstaClientSocket.EndTransaction(true);
+	 END;
+end;
+
+procedure TSURPRODUCTO.nextID(ClientDS: TAstaClientDataSet);
+begin
+end;
+
+
+PROCEDURE TSURPRODUCTO.setID(pID:Integer);
+BEGIN
+	aID:= pID;
+END;
+
+PROCEDURE TSURPRODUCTO.setDESCRIPCION(pDESCRIPCION:String);
+BEGIN
+	aDESCRIPCION:= pDESCRIPCION;
+END;
+
+PROCEDURE TSURPRODUCTO.setABREV(pABREV:String);
+BEGIN
+	aABREV:= pABREV;
+END;
+
+PROCEDURE TSURPRODUCTO.setALIAS(pALIAS:Integer);
+BEGIN
+	aALIAS:= pALIAS;
+END;
+
+PROCEDURE TSURPRODUCTO.setPRECIO(pPRECIO:Double);
+BEGIN
+	aPRECIO:= pPRECIO;
+END;
+
+PROCEDURE TSURPRODUCTO.setIDUNIDAD(pIDUNIDAD:Integer);
+BEGIN
+	aIDUNIDAD:= pIDUNIDAD;
+END;
+
+PROCEDURE TSURPRODUCTO.setPRECIOTERCEROS(pPRECIOTERCEROS:Double);
+BEGIN
+	aPRECIOTERCEROS:= pPRECIOTERCEROS;
+END;
+
+
+FUNCTION TSURPRODUCTO.getID	:Integer;
+BEGIN
+	RESULT := aID;
+END;
+
+FUNCTION TSURPRODUCTO.getDESCRIPCION	:String;
+BEGIN
+	RESULT := aDESCRIPCION;
+END;
+
+FUNCTION TSURPRODUCTO.getABREV	:String;
+BEGIN
+	RESULT := aABREV;
+END;
+
+FUNCTION TSURPRODUCTO.getALIAS	:Integer;
+BEGIN
+	RESULT := aALIAS;
+END;
+
+FUNCTION TSURPRODUCTO.getPRECIO	:Double;
+BEGIN
+	RESULT := aPRECIO;
+END;
+
+FUNCTION TSURPRODUCTO.getIDUNIDAD	:Integer;
+BEGIN
+	RESULT := aIDUNIDAD;
+END;
+
+FUNCTION TSURPRODUCTO.getPRECIOTERCEROS	:Double;
+BEGIN
+	RESULT := aPRECIOTERCEROS;
+END;
+
+
+END.
+

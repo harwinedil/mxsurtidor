@@ -1,0 +1,195 @@
+unit UfrmBaseIntro;
+
+interface
+
+uses
+	Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+	Dialogs, ToolWin, ComCtrls, ExtCtrls, SUIDBCtrls, TFlatTitlebarUnit,
+	SUIToolBar, ImgList, DB, AstaDrv2, AstaClientDataset,DBCtrls,
+	UGralUtilidades, Menus, SUIPopupMenu,TypInfo,
+  TFlatComboBoxUnit,
+	UConstantes, StdCtrls, Mask, JvExMask, JvToolEdit, JvExStdCtrls, JvEdit,
+  JvValidateEdit, ToolEdit, CurrEdit;
+
+type
+  TfrmBaseIntro = class(TForm)
+    StatusBar1: TStatusBar;
+    Panel1: TPanel;
+		itool: TImageList;
+		cds: TAstaClientDataSet;
+		dsNav: TDataSource;
+		ToolBar1: TToolBar;
+    bSave: TToolButton;
+    bSyncro: TToolButton;
+		ToolButton20: TToolButton;
+		bClose: TToolButton;
+    lCaption: TFlatTitlebar;
+    msg: TFlatTitlebar;
+    bAdd: TToolButton;
+		procedure bSaveClick(Sender: TObject);
+		procedure bCloseClick(Sender: TObject);
+		procedure FormCreate(Sender: TObject);
+		procedure FormDestroy(Sender: TObject);
+		procedure FormKeyDown(Sender: TObject; var Key: Word;
+			Shift: TShiftState);
+    procedure bAddClick(Sender: TObject);
+    procedure colorON(Sender: TObject);
+    procedure colorOFF(Sender: TObject);
+    
+	private
+		{ Private declarations }
+	protected
+	public
+			procedure init;		virtual;
+			procedure Save;		virtual;
+			procedure loadConfig; virtual;
+			procedure freeAll;   virtual;
+			procedure showmsg(mes:string);
+			procedure updateData; virtual;
+ 			procedure syncro;       virtual;
+      procedure add; virtual;
+	end;
+
+var
+	frmBaseIntro: TfrmBaseIntro;
+
+implementation
+uses UfrmMAIN;
+{$R *.dfm}
+
+procedure TfrmBaseIntro.init;
+begin
+		utils.formLimpiarEntradas(self);
+end;
+
+procedure TfrmBaseIntro.Save;
+begin
+
+end;
+
+procedure TfrmBaseIntro.bSaveClick(Sender: TObject);
+begin
+    ModalResult := mrYes;
+end;
+
+procedure TfrmBaseIntro.bCloseClick(Sender: TObject);
+begin
+		 ModalResult := mrCancel;
+		 close;
+end;
+
+procedure TfrmBaseIntro.loadConfig;
+var i : word;
+		comp : TComponent;
+begin
+     //leyendo las etiquetas
+      lCaption.Caption := frmMAIN.getLabel(lCaption.Caption);
+			for i:= 0 to self.ComponentCount-1 do
+			begin
+					comp := self.Components[i];
+          if (comp is TLabel) and (comp.Tag = 0) then //solo las etiquetas con tag 0 PONER en 1 las que no se quieren tocar
+               (comp as TLabel).Caption := frmMAIN.getLabel((comp as TLabel).Caption)
+          else if (comp is TToolButton) then
+               begin
+                    (comp as TToolButton).Caption := frmMAIN.getLabel((comp as TToolButton).Caption);
+                    (comp as TToolButton).Hint    := (comp as TToolButton).Caption;
+               end;
+			end;
+end;
+
+procedure TfrmBaseIntro.FormCreate(Sender: TObject);
+begin
+		 loadConfig;
+		 init;
+end;
+
+procedure TfrmBaseIntro.FormDestroy(Sender: TObject);
+begin
+		freeAll;
+end;
+
+procedure TfrmBaseIntro.freeAll;
+begin
+		if cds.Active then
+			cds.Close;
+end;
+
+
+procedure TfrmBaseIntro.showmsg(mes: string);
+begin
+			msg.Caption := DateTimeToStr(now)+': '+mes;
+end;
+
+procedure TfrmBaseIntro.updateData;
+begin
+
+end;
+
+procedure TfrmBaseIntro.FormKeyDown(Sender: TObject; var Key: Word;
+	Shift: TShiftState);
+begin
+
+			case key of
+
+					 VK_F10:begin
+										if bSave.Enabled and bSave.Visible then bSave.Click; key:=0;
+									end;
+					 VK_F12:begin
+											close; key:=0;
+									end;
+           VK_F11: begin
+                        if bSyncro.Enabled and bSyncro.Visible then
+                                           syncro;
+                        key :=0;
+                   end;
+					 VK_F5: begin
+											 updateData;
+											 key := 0;
+									end;
+           VK_f2: begin
+                       if bAdd.Enabled and bAdd.Visible then
+                          bAdd.Click; key:=0;
+                  end;
+			end;
+end;
+
+procedure TfrmBaseIntro.syncro;
+begin
+
+end;
+
+procedure TfrmBaseIntro.add;
+begin
+
+end;
+
+procedure TfrmBaseIntro.bAddClick(Sender: TObject);
+begin
+     add;
+end;
+
+procedure TfrmBaseIntro.colorOFF(Sender: TObject);
+begin
+     if (Sender is TEdit)            then (Sender as TEdit).Color     := clBtnFace
+else if (Sender is TComboBox)        then (Sender as TComboBox).Color := clBtnFace
+else if (sender is TMemo)            then (Sender as TMemo).Color     := clBtnFace
+else if (Sender is TFlatComboBox)    then (Sender as TFlatComboBox).Color := clBtnFace
+else if (Sender is TJvDateEdit)      then (sender as TJvDateEdit).Color   := clBtnFace
+else if (Sender is TJvValidateEdit)  then (sender as TJvValidateEdit).Color:=clBtnFace
+else if (Sender is TCurrencyEdit)    then (Sender as TCurrencyEdit).Color  := clBtnFace;
+
+end;
+
+procedure TfrmBaseIntro.colorON(Sender: TObject);
+begin
+     if (Sender is TEdit)            then (Sender as TEdit).Color     := clWhite
+else if (Sender is TComboBox)        then (Sender as TComboBox).Color := clWhite
+else if (sender is TMemo)            then (Sender as TMemo).Color     := clWhite
+else if (Sender is TFlatComboBox)    then (Sender as TFlatComboBox).Color := clWhite
+else if (Sender is TJvDateEdit)      then (sender as TJvDateEdit).Color   := clWhite
+else if (Sender is TJvValidateEdit)  then (sender as TJvValidateEdit).Color:=clWhite
+else if (Sender is TCurrencyEdit)    then (Sender as TCurrencyEdit).Color  := clWhite;
+
+end;
+
+end.

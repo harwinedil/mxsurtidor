@@ -1,0 +1,467 @@
+UNIT UclasSURVENDEDOR;
+
+{
+GENERADO AUTOMATICAMENTE POR "Generador v.2012"
+AUTOR              : HARWIN EDIL PEREZ SALINAS   [harwinedil@gmail.com]
+DESCRIPCION        : Clase para interactuar con la Tabla : SURVENDEDOR
+FECHA CREACION     : 05/12/2012 Hora: 21:08:13
+ULTIMA MODIFICACION: 05/12/2012 Hora: 21:08:13
+MODIFICADO POR     : HARWIN EDIL PEREZ SALINAS
+OBSERVACIONES      :
+
+}
+
+INTERFACE
+
+USES
+  sysUtils,uLkJSON,AstaDrv2,AstaClientDataset,AstaParamList,UBaseObject,Uconstantes,
+  forms, classes,UGralUtilidades,UclasSYSUSER,DBCtrls,SUIDBCtrls;
+
+
+TYPE
+	PSURVENDEDOR = ^TSURVENDEDOR;
+	TSURVENDEDOR = CLASS(TBaseObject)
+	PRIVATE
+		aIDPLAYERO	: String[22]; 
+		aCODIGO  	: String[8]; 
+		aNOMBRE  	: String[60]; 
+		aCLAVE   	: String[10]; 
+		aIDCADENA	: String[22]; 
+		aTAG     	: Integer;
+	PUBLIC
+		CONSTRUCTOR     Create;		OVERLOAD;
+		CONSTRUCTOR     Create(pIDPLAYERO:String; pCODIGO:String; pNOMBRE:String; pCLAVE:String; pIDCADENA:String; pTAG:Integer); OVERLOAD;
+		CONSTRUCTOR     Create(const pObjeto:TSURVENDEDOR);OVERLOAD;
+		DESTRUCTOR      Destroy;	OVERRIDE;
+		PROCEDURE       init;		OVERRIDE;
+		PROCEDURE       setAtributos(pIDPLAYERO:String; pCODIGO:String; pNOMBRE:String; pCLAVE:String; pIDCADENA:String; pTAG:Integer);		
+
+		PROCEDURE       fromJson(o:TlkJSONobject); OVERRIDE;
+		PROCEDURE       fromJsonString(s:string);  OVERRIDE;
+		FUNCTION        toJsonString : string; OVERRIDE;
+		FUNCTION        sqlGetField(field:string) : string; OVERRIDE;
+		FUNCTION        sqlGetKeyValue(key,value : string) : string; OVERRIDE;
+		FUNCTION        sqlGetAll : string; OVERRIDE;
+		PROCEDURE       QBE( columns,where :string ; ClientDS: TAstaClientDataSet; params:TAstaParamList=NIL); OVERLOAD;OVERRIDE;
+		PROCEDURE       filtrar(cds:TAstaClientDataSet; where:string = ''; params:TAstaParamList=NIL); OVERRIDE;
+		PROCEDURE       QBE(ClientDS: TAstaClientDataSet; where:string = '';params:TAstaParamList=NIL);  OVERLOAD;OVERRIDE;
+
+		FUNCTION        save(ClientDS: TAstaClientDataSet; transacction: byte) : byte; OVERRIDE;
+		FUNCTION        exist(ClientDS: TAstaClientDataSet) : boolean;OVERRIDE;
+		PROCEDURE       fromClientDataSet(ClientDS: TAstaClientDataSet);OVERRIDE;
+		PROCEDURE       fromGUI(form:TForm ); OVERRIDE;
+		PROCEDURE       toGUI(form:TForm ); OVERRIDE;
+		PROCEDURE       nextID(ClientDS: TAstaClientDataSet); OVERRIDE;
+
+		PROCEDURE   	setIDPLAYERO(pIDPLAYERO:String);
+		PROCEDURE   	setCODIGO(pCODIGO:String);
+		PROCEDURE   	setNOMBRE(pNOMBRE:String);
+		PROCEDURE   	setCLAVE(pCLAVE:String);
+		PROCEDURE   	setIDCADENA(pIDCADENA:String);
+		PROCEDURE   	setTAG(pTAG:Integer);
+
+		FUNCTION    	getIDPLAYERO 	:String;
+		FUNCTION    	getCODIGO    	:String;
+		FUNCTION    	getNOMBRE    	:String;
+		FUNCTION    	getCLAVE     	:String;
+		FUNCTION    	getIDCADENA  	:String;
+		FUNCTION    	getTAG       	:Integer;
+
+		PROPERTY    	IDPLAYERO  : String    	read getIDPLAYERO 	write setIDPLAYERO ;
+		PROPERTY    	CODIGO     : String    	read getCODIGO    	write setCODIGO    ;
+		PROPERTY    	NOMBRE     : String    	read getNOMBRE    	write setNOMBRE    ;
+		PROPERTY    	CLAVE      : String    	read getCLAVE     	write setCLAVE     ;
+		PROPERTY    	IDCADENA   : String    	read getIDCADENA  	write setIDCADENA  ;
+		PROPERTY    	TAG        : Integer   	read getTAG       	write setTAG       ;
+
+		
+	END;
+
+IMPLEMENTATION
+{TSURVENDEDOR}
+
+CONSTRUCTOR TSURVENDEDOR.Create;
+BEGIN
+	aIDPLAYERO:= '';
+	aCODIGO   := '';
+	aNOMBRE   := '';
+	aCLAVE    := '';
+	aIDCADENA := '';
+	aTAG      := 0;	
+	autocommit := true;												
+END;
+
+CONSTRUCTOR TSURVENDEDOR.Create(pIDPLAYERO:String; pCODIGO:String; pNOMBRE:String; pCLAVE:String; pIDCADENA:String; pTAG:Integer);
+BEGIN
+	aIDPLAYERO:= pIDPLAYERO;
+	aCODIGO   := pCODIGO   ;
+	aNOMBRE   := pNOMBRE   ;
+	aCLAVE    := pCLAVE    ;
+	aIDCADENA := pIDCADENA ;
+	aTAG      := pTAG      ;
+	autocommit := true;
+END;
+
+CONSTRUCTOR TSURVENDEDOR.Create(const pObjeto:TSURVENDEDOR);
+BEGIN
+	aIDPLAYERO:= pObjeto.IDPLAYERO;
+	aCODIGO   := pObjeto.CODIGO   ;
+	aNOMBRE   := pObjeto.NOMBRE   ;
+	aCLAVE    := pObjeto.CLAVE    ;
+	aIDCADENA := pObjeto.IDCADENA ;
+	aTAG      := pObjeto.TAG      ;
+	autocommit := pObjeto.autocommit;
+END;
+
+DESTRUCTOR TSURVENDEDOR.Destroy;
+BEGIN
+	
+	inherited Destroy;
+END;
+
+PROCEDURE TSURVENDEDOR.init;
+BEGIN
+	aIDPLAYERO:= '';
+	aCODIGO   := '';
+	aNOMBRE   := '';
+	aCLAVE    := '';
+	aIDCADENA := '';
+	aTAG      := 0;														
+END;
+
+PROCEDURE TSURVENDEDOR.fromJsonString(s:string);
+BEGIN
+	self.fromJson(TlkJSON.ParseText(s) as TlkJSONobject);
+END;
+
+PROCEDURE TSURVENDEDOR.fromJson(o:TlkJSONobject);
+BEGIN
+	IDPLAYERO := (o.Field['IDPLAYERO'] as TlkJSONstring).Value;
+	CODIGO    := (o.Field['CODIGO'] as TlkJSONstring).Value;
+	NOMBRE    := (o.Field['NOMBRE'] as TlkJSONstring).Value;
+	CLAVE     := (o.Field['CLAVE'] as TlkJSONstring).Value;
+	IDCADENA  := (o.Field['IDCADENA'] as TlkJSONstring).Value;
+	TAG       := (o.Field['TAG'] as TlkJSONnumber).Value;
+END;
+
+FUNCTION TSURVENDEDOR.toJsonString : string;
+var  json : TlkJSONobject;
+BEGIN
+	json := TlkJSONobject.Create();
+	TRY	
+		json.Add('IDPLAYERO',TlkJSONstring.Generate(IDPLAYERO));
+		json.Add('CODIGO',TlkJSONstring.Generate(CODIGO));
+		json.Add('NOMBRE',TlkJSONstring.Generate(NOMBRE));
+		json.Add('CLAVE',TlkJSONstring.Generate(CLAVE));
+		json.Add('IDCADENA',TlkJSONstring.Generate(IDCADENA));
+		json.Add('TAG',TlkJSONNumber.Generate(TAG));
+	FINALLY
+		RESULT := TlkJSON.GenerateText(json);
+		FreeAndNIL(json);
+	END;
+END;
+
+
+PROCEDURE TSURVENDEDOR.setAtributos(pIDPLAYERO:String; pCODIGO:String; pNOMBRE:String; pCLAVE:String; pIDCADENA:String; pTAG:Integer);		
+BEGIN
+	aIDPLAYERO:= pIDPLAYERO;
+	aCODIGO   := pCODIGO   ;
+	aNOMBRE   := pNOMBRE   ;
+	aCLAVE    := pCLAVE    ;
+	aIDCADENA := pIDCADENA ;
+	aTAG      := pTAG      ;	
+END;
+
+FUNCTION TSURVENDEDOR.sqlGetField(field:string) : string;
+BEGIN
+	RESULT := 'select '+field+' from SURVENDEDOR order by '+field;
+END;
+
+FUNCTION TSURVENDEDOR.sqlGetKeyValue(key,value : string) : string;
+BEGIN
+	RESULT := 'select '+key+' as key,'+value+'as value from SURVENDEDOR order by '+value;
+END;
+
+FUNCTION  TSURVENDEDOR.sqlGetAll : string;
+BEGIN
+	RESULT := 'select * from SURVENDEDOR';
+END;
+
+PROCEDURE TSURVENDEDOR.filtrar(cds:TAstaClientDataSet; where:string = ''; params:TAstaParamList=NIL);
+var  	y : string;
+	i : word;
+BEGIN
+	y := ' where ';
+	IF SELF.IDPLAYERO<>'' THEN
+	BEGIN
+		cds.sql.add( y +'IDPLAYERO= :pIDPLAYERO');
+		cds.ParamByName('pIDPLAYERO').asString	:= SELF.IDPLAYERO;
+		y := ' and ';
+	END;
+
+	IF SELF.CODIGO<>'' THEN
+	BEGIN
+		cds.sql.add( y +'CODIGO= :pCODIGO');
+		cds.ParamByName('pCODIGO').asString	:= SELF.CODIGO;
+		y := ' and ';
+	END;
+
+	IF SELF.NOMBRE<>'' THEN
+	BEGIN
+		cds.sql.add( y +'NOMBRE= :pNOMBRE');
+		cds.ParamByName('pNOMBRE').asString	:= SELF.NOMBRE;
+		y := ' and ';
+	END;
+
+	IF SELF.CLAVE<>'' THEN
+	BEGIN
+		cds.sql.add( y +'CLAVE= :pCLAVE');
+		cds.ParamByName('pCLAVE').asString	:= SELF.CLAVE;
+		y := ' and ';
+	END;
+
+	IF SELF.IDCADENA<>'' THEN
+	BEGIN
+		cds.sql.add( y +'IDCADENA= :pIDCADENA');
+		cds.ParamByName('pIDCADENA').asString	:= SELF.IDCADENA;
+		y := ' and ';
+	END;
+{
+	IF SELF.TAG<>0 THEN
+	BEGIN
+		cds.sql.add( y +'TAG= :pTAG');
+		cds.ParamByName('pTAG').asInteger	:= SELF.TAG;
+		y := ' and ';
+	END;
+}
+
+	if where <> '' then
+	begin
+	cds.sql.add(where);
+	for i:=0 to params.count-1 do
+		cds.params.AddOneParamItem(params.items[i]);
+	end;
+END;
+
+
+PROCEDURE TSURVENDEDOR.QBE(ClientDS: TAstaClientDataSet; where:string = ''; params:TAstaParamList=NIL);
+BEGIN
+	initDataSet(ClientDS);
+	clientDS.sql.add(sqlGetAll);
+	filtrar(ClientDS,where,params);
+	clientDS.prepare;
+	clientDS.Open;
+END;
+
+PROCEDURE TSURVENDEDOR.QBE(columns,where :string ; ClientDS: TAstaClientDataSet; params:TAstaParamList=NIL);
+BEGIN
+	initDataSet(ClientDS);
+	clientDS.sql.add('select '+columns+ ' from SURVENDEDOR');
+	ClientDS.SQL.Add('where '+where);
+
+	if params <> NIL then
+		ClientDS.Params := params;
+
+	clientDS.prepare;
+	clientDS.Open;
+END;
+
+function TSURVENDEDOR.exist(ClientDS: TAstaClientDataSet): boolean;
+begin
+	initDataSet(ClientDS);
+	ClientDS.SQL.Add('select id from SURVENDEDOR where codigo=:pID');
+	ClientDS.ParamByName('pID').AsString := SELF.CODIGO;
+	ClientDS.Open;
+
+	Result := not ClientDS.IsEmpty;
+end;
+
+procedure TSURVENDEDOR.fromClientDataSet(ClientDS: TAstaClientDataSet);
+begin
+	inherited;
+	IF NOT ClientDS.Active THEN EXIT;
+	SELF.IDPLAYERO := clientDS.FieldByName('IDPLAYERO').AsString;
+	SELF.CODIGO    := clientDS.FieldByName('CODIGO').AsString;
+	SELF.NOMBRE    := Trim(UpperCase( clientDS.FieldByName('NOMBRE').AsString));
+	SELF.CLAVE     := '******';
+	SELF.IDCADENA  := clientDS.FieldByName('IDCADENA').AsString;
+	SELF.TAG       := clientDS.FieldByName('TAG').AsInteger;
+end;
+
+
+procedure TSURVENDEDOR.fromGUI(form: TForm);
+begin
+	with form do
+	begin
+{		SELF.IDPLAYERO:= utils.formObtenerPropiedad(FindComponent('cIDPLAYERO'),'Text');
+		SELF.CODIGO   := utils.formObtenerPropiedad(FindComponent('cCODIGO'),'Text');
+		SELF.NOMBRE   := utils.formObtenerPropiedad(FindComponent('cNOMBRE'),'Text');
+		SELF.CLAVE    := utils.formObtenerPropiedad(FindComponent('cCLAVE'),'Text');
+		SELF.IDCADENA := utils.formObtenerPropiedad(FindComponent('cIDCADENA'),'Text');
+		SELF.TAG      := utils.formObtenerPropiedad(FindComponent('cTAG'),'Text');
+}
+	end;
+end;
+
+procedure TSURVENDEDOR.toGUI(form: TForm);
+begin
+	inherited;
+	with form do
+	begin
+{	utils.formAsignaPropiedad(FindComponent('cIDPLAYERO'),'Text', (SELF.IDPLAYERO));
+	utils.formAsignaPropiedad(FindComponent('cCODIGO'),'Text', (SELF.CODIGO));
+	utils.formAsignaPropiedad(FindComponent('cNOMBRE'),'Text', (SELF.NOMBRE));
+	utils.formAsignaPropiedad(FindComponent('cCLAVE'),'Text', (SELF.CLAVE));
+	utils.formAsignaPropiedad(FindComponent('cIDCADENA'),'Text', (SELF.IDCADENA));
+	utils.formAsignaPropiedad(FindComponent('cTAG'),'Text', IntTOStr(SELF.TAG));
+}
+	end;
+end;
+
+function TSURVENDEDOR.save(ClientDS: TAstaClientDataSet;transacction: byte): byte;
+//var   date : TDateTime;
+begin
+	RESULT := cFalse;
+//	date := self.getFechaHoraServer(ClientDS);
+	initDataSet(ClientDS);
+
+//	if autocommit then
+//		ClientDS.AstaClientSocket.StartTransaction;
+
+	 TRY
+
+	case transacction of
+
+	1 : begin         //update
+		ClientDS.SQL.Add('UPDATE SURVENDEDOR SET '+
+				' IDPLAYERO = :pIDPLAYERO'+
+				',CODIGO = :pCODIGO'+
+				',NOMBRE = :pNOMBRE'+
+				',CLAVE = :pCLAVE'+
+				',IDCADENA = :pIDCADENA'+
+				',TAG = :pTAG'+
+				' WHERE IDPLAYERO = :pIDPLAYERO'
+		);
+		ClientDS.ParamByName('pIDPLAYERO').asString        := SELF.IDPLAYERO;
+		ClientDS.ParamByName('pCODIGO').asString           := SELF.CODIGO;
+		ClientDS.ParamByName('pNOMBRE').asString           := SELF.NOMBRE;
+		ClientDS.ParamByName('pCLAVE').asString            := SELF.CLAVE;
+		ClientDS.ParamByName('pIDCADENA').asString         := SELF.IDCADENA;
+		ClientDS.ParamByName('pTAG').asInteger             := SELF.TAG;
+	end;
+
+	0: begin	//insert
+		SELF.nextID(clientDS);
+
+		initDataSet(ClientDS);
+		ClientDS.SQL.Add('INSERT INTO SURVENDEDOR (IDPLAYERO,CODIGO,NOMBRE,CLAVE,IDCADENA,TAG)');
+		ClientDS.SQL.Add(' VALUES ');
+		ClientDS.SQL.Add('(:pIDPLAYERO,:pCODIGO,:pNOMBRE,:pCLAVE,:pIDCADENA,:pTAG)');
+		ClientDS.ParamByName('pIDPLAYERO').asString        := SELF.IDPLAYERO;
+		ClientDS.ParamByName('pCODIGO').asString           := SELF.CODIGO;
+		ClientDS.ParamByName('pNOMBRE').asString           := SELF.NOMBRE;
+		ClientDS.ParamByName('pCLAVE').asString            := SELF.CLAVE;
+		ClientDS.ParamByName('pIDCADENA').asString         := SELF.IDCADENA;
+		ClientDS.ParamByName('pTAG').asInteger             := SELF.TAG;
+	end;
+
+	2: begin //delete
+		ClientDS.SQL.Add('delete from SURVENDEDOR where idPlayero =:pid');
+		ClientDS.ParamByName('pID').AsString := SELF.IDPLAYERO;
+	end;
+
+	4: begin //enable
+		ClientDS.SQL.Add('update SURVENDEDOR set status=:pstatus where idPlayero =:pid');
+		ClientDS.ParamByName('pID').AsString := SELF.IDPLAYERO;
+		ClientDS.ParamByName('pstatus').asString := '1';
+	end;
+
+	5: begin //disable
+		ClientDS.SQL.Add('update SURVENDEDOR set status=:pstatus where idPlayero =:pid');
+		ClientDS.ParamByName('pID').AsString := SELF.IDPLAYERO;
+		ClientDS.ParamByName('pstatus').asString := '0';
+	end;
+
+	end;
+	if autocommit then
+		ClientDS.AstaClientSocket.StartTransaction;
+
+	ClientDS.ExecSQL;
+	Result := cTrue;
+
+	 FINALLY
+	if autocommit then
+			ClientDS.AstaClientSocket.EndTransaction(true);
+	 END;
+end;
+
+procedure TSURVENDEDOR.nextID(ClientDS: TAstaClientDataSet);
+begin
+
+end;
+
+
+PROCEDURE TSURVENDEDOR.setIDPLAYERO(pIDPLAYERO:String);
+BEGIN
+	aIDPLAYERO:= pIDPLAYERO;
+END;
+
+PROCEDURE TSURVENDEDOR.setCODIGO(pCODIGO:String);
+BEGIN
+	aCODIGO:= pCODIGO;
+END;
+
+PROCEDURE TSURVENDEDOR.setNOMBRE(pNOMBRE:String);
+BEGIN
+	aNOMBRE:= pNOMBRE;
+END;
+
+PROCEDURE TSURVENDEDOR.setCLAVE(pCLAVE:String);
+BEGIN
+	aCLAVE:= pCLAVE;
+END;
+
+PROCEDURE TSURVENDEDOR.setIDCADENA(pIDCADENA:String);
+BEGIN
+	aIDCADENA:= pIDCADENA;
+END;
+
+PROCEDURE TSURVENDEDOR.setTAG(pTAG:Integer);
+BEGIN
+	aTAG:= pTAG;
+END;
+
+
+FUNCTION TSURVENDEDOR.getIDPLAYERO	:String;
+BEGIN
+	RESULT := aIDPLAYERO;
+END;
+
+FUNCTION TSURVENDEDOR.getCODIGO	:String;
+BEGIN
+	RESULT := aCODIGO;
+END;
+
+FUNCTION TSURVENDEDOR.getNOMBRE	:String;
+BEGIN
+	RESULT := aNOMBRE;
+END;
+
+FUNCTION TSURVENDEDOR.getCLAVE	:String;
+BEGIN
+	RESULT := aCLAVE;
+END;
+
+FUNCTION TSURVENDEDOR.getIDCADENA	:String;
+BEGIN
+	RESULT := aIDCADENA;
+END;
+
+FUNCTION TSURVENDEDOR.getTAG	:Integer;
+BEGIN
+	RESULT := aTAG;
+END;
+
+
+END.
+

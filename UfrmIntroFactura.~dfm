@@ -1,0 +1,1012 @@
+inherited frmIntroFactura: TfrmIntroFactura
+  Left = 350
+  Top = 95
+  Caption = 'frmIntroFactura'
+  ClientHeight = 524
+  ClientWidth = 642
+  OldCreateOrder = True
+  Position = poScreenCenter
+  OnClose = FormClose
+  PixelsPerInch = 96
+  TextHeight = 14
+  inherited StatusBar1: TStatusBar
+    Top = 505
+    Width = 642
+  end
+  inherited Panel1: TPanel
+    Top = 487
+    Width = 642
+    Height = 18
+  end
+  inherited ToolBar1: TToolBar
+    Width = 642
+  end
+  inherited lCaption: TFlatTitlebar
+    Width = 642
+    Caption = 'Registro de Facturas de Combustibles'
+  end
+  inherited msg: TFlatTitlebar
+    Top = 468
+    Width = 642
+  end
+  object Panel2: TPanel [5]
+    Left = 0
+    Top = 74
+    Width = 642
+    Height = 41
+    Align = alTop
+    BevelOuter = bvLowered
+    TabOrder = 5
+    object Label1: TLabel
+      Left = 40
+      Top = 6
+      Width = 44
+      Height = 14
+      Caption = 'Sucursal'
+    end
+    object Label3: TLabel
+      Left = 40
+      Top = 22
+      Width = 32
+      Height = 14
+      Caption = 'Fecha'
+    end
+    object Label4: TLabel
+      Left = 280
+      Top = 22
+      Width = 54
+      Height = 14
+      Caption = 'Vendedor'
+    end
+    object lSucursal: TLabel
+      Left = 96
+      Top = 6
+      Width = 51
+      Height = 14
+      Caption = 'Sucursal'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clBlack
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object Label5: TLabel
+      Left = 296
+      Top = 6
+      Width = 37
+      Height = 14
+      Caption = 'Codigo'
+    end
+    object lCodigo: TLabel
+      Left = 344
+      Top = 6
+      Width = 51
+      Height = 14
+      Caption = 'Sucursal'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clBlack
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object lFecha: TLabel
+      Left = 96
+      Top = 22
+      Width = 51
+      Height = 14
+      Caption = 'Sucursal'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clBlack
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object lVendedor: TLabel
+      Left = 344
+      Top = 22
+      Width = 51
+      Height = 14
+      Caption = 'Sucursal'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clBlack
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object Label16: TLabel
+      Left = 550
+      Top = 4
+      Width = 81
+      Height = 19
+      Alignment = taRightJustify
+      Caption = 'ANULADA'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clRed
+      Font.Height = -16
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+  end
+  object pLimite: TPanel [6]
+    Left = 0
+    Top = 115
+    Width = 642
+    Height = 70
+    Align = alTop
+    BevelOuter = bvLowered
+    TabOrder = 6
+    object gResumen: TAdvColumnGrid
+      Left = 1
+      Top = 1
+      Width = 640
+      Height = 68
+      Cursor = crDefault
+      Align = alClient
+      BorderStyle = bsNone
+      Color = 15263976
+      ColCount = 6
+      Ctl3D = True
+      DefaultRowHeight = 17
+      DefaultDrawing = False
+      FixedColor = clSilver
+      FixedCols = 0
+      RowCount = 4
+      FixedRows = 1
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      GridLineWidth = 1
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goDrawFocusSelected, goRowSelect]
+      ParentCtl3D = False
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 0
+      GridLineColor = clSilver
+      ActiveCellShow = False
+      ActiveCellFont.Charset = DEFAULT_CHARSET
+      ActiveCellFont.Color = clWindowText
+      ActiveCellFont.Height = -11
+      ActiveCellFont.Name = 'MS Sans Serif'
+      ActiveCellFont.Style = [fsBold]
+      ActiveCellColor = clGray
+      Bands.Active = True
+      Bands.PrimaryColor = clBtnFace
+      Bands.PrimaryLength = 1
+      Bands.SecondaryColor = clWindow
+      Bands.SecondaryLength = 1
+      Bands.Print = False
+      AutoNumAlign = False
+      AutoSize = False
+      VAlignment = vtaCenter
+      EnhTextSize = False
+      EnhRowColMove = False
+      SizeWithForm = False
+      Multilinecells = False
+      DragDropSettings.OleAcceptFiles = True
+      DragDropSettings.OleAcceptText = True
+      SortSettings.AutoColumnMerge = False
+      SortSettings.Column = 0
+      SortSettings.Show = False
+      SortSettings.IndexShow = False
+      SortSettings.IndexColor = clYellow
+      SortSettings.Full = True
+      SortSettings.SingleColumn = False
+      SortSettings.IgnoreBlanks = False
+      SortSettings.BlankPos = blFirst
+      SortSettings.AutoFormat = True
+      SortSettings.Direction = sdAscending
+      SortSettings.FixedCols = False
+      SortSettings.NormalCellsOnly = False
+      SortSettings.Row = 0
+      FloatingFooter.Color = clBtnFace
+      FloatingFooter.Column = 0
+      FloatingFooter.FooterStyle = fsFixedLastRow
+      FloatingFooter.Visible = False
+      ControlLook.Color = clBlack
+      ControlLook.CheckSize = 15
+      ControlLook.RadioSize = 10
+      ControlLook.ControlStyle = csClassic
+      ControlLook.FlatButton = False
+      EnableBlink = False
+      EnableHTML = True
+      EnableWheel = True
+      Flat = False
+      Look = glTMS
+      HintColor = clInfoBk
+      SelectionColor = 12615680
+      SelectionTextColor = clHighlightText
+      SelectionRectangle = False
+      SelectionResizer = False
+      SelectionRTFKeep = False
+      HintShowCells = False
+      HintShowLargeText = False
+      HintShowSizing = False
+      PrintSettings.FooterSize = 0
+      PrintSettings.HeaderSize = 0
+      PrintSettings.Time = ppNone
+      PrintSettings.Date = ppNone
+      PrintSettings.DateFormat = 'dd/mm/yyyy'
+      PrintSettings.PageNr = ppNone
+      PrintSettings.Title = ppNone
+      PrintSettings.Font.Charset = DEFAULT_CHARSET
+      PrintSettings.Font.Color = clWindowText
+      PrintSettings.Font.Height = -11
+      PrintSettings.Font.Name = 'MS Sans Serif'
+      PrintSettings.Font.Style = []
+      PrintSettings.HeaderFont.Charset = DEFAULT_CHARSET
+      PrintSettings.HeaderFont.Color = clWindowText
+      PrintSettings.HeaderFont.Height = -11
+      PrintSettings.HeaderFont.Name = 'MS Sans Serif'
+      PrintSettings.HeaderFont.Style = []
+      PrintSettings.FooterFont.Charset = DEFAULT_CHARSET
+      PrintSettings.FooterFont.Color = clWindowText
+      PrintSettings.FooterFont.Height = -11
+      PrintSettings.FooterFont.Name = 'MS Sans Serif'
+      PrintSettings.FooterFont.Style = []
+      PrintSettings.Borders = pbNoborder
+      PrintSettings.BorderStyle = psSolid
+      PrintSettings.Centered = False
+      PrintSettings.RepeatFixedRows = False
+      PrintSettings.RepeatFixedCols = False
+      PrintSettings.LeftSize = 0
+      PrintSettings.RightSize = 0
+      PrintSettings.ColumnSpacing = 0
+      PrintSettings.RowSpacing = 0
+      PrintSettings.TitleSpacing = 0
+      PrintSettings.Orientation = poPortrait
+      PrintSettings.PageNumberOffset = 0
+      PrintSettings.MaxPagesOffset = 0
+      PrintSettings.FixedWidth = 0
+      PrintSettings.FixedHeight = 0
+      PrintSettings.UseFixedHeight = False
+      PrintSettings.UseFixedWidth = False
+      PrintSettings.FitToPage = fpNever
+      PrintSettings.PageNumSep = '/'
+      PrintSettings.NoAutoSize = False
+      PrintSettings.NoAutoSizeRow = False
+      PrintSettings.PrintGraphics = False
+      HTMLSettings.Width = 100
+      HTMLSettings.XHTML = False
+      Navigation.AdvanceDirection = adLeftRight
+      Navigation.InsertPosition = pInsertBefore
+      Navigation.HomeEndKey = heFirstLastColumn
+      ColumnSize.Location = clRegistry
+      CellNode.Color = clSilver
+      CellNode.NodeColor = clBlack
+      CellNode.ShowTree = False
+      MaxEditLength = 0
+      IntelliPan = ipVertical
+      URLColor = clBlue
+      URLShow = False
+      URLFull = False
+      URLEdit = False
+      ScrollType = ssNormal
+      ScrollColor = clNone
+      ScrollWidth = 17
+      ScrollSynch = False
+      ScrollProportional = False
+      ScrollHints = shNone
+      OemConvert = False
+      FixedFooters = 0
+      FixedRightCols = 0
+      FixedColWidth = 100
+      FixedRowHeight = 17
+      FixedFont.Charset = DEFAULT_CHARSET
+      FixedFont.Color = clWindowText
+      FixedFont.Height = -11
+      FixedFont.Name = 'Tahoma'
+      FixedFont.Style = []
+      FixedAsButtons = False
+      FloatFormat = '%.2f'
+      IntegralHeight = False
+      WordWrap = False
+      ColumnHeaders.Strings = (
+        'Producto'
+        'Volumen'
+        'Importe'
+        'Facturado'
+        'Por Facturar')
+      Lookup = False
+      LookupCaseSensitive = False
+      LookupHistory = False
+      BackGround.Top = 0
+      BackGround.Left = 0
+      BackGround.Display = bdTile
+      BackGround.Cells = bcNormal
+      Filter = <>
+      Columns = <
+        item
+          AutoMinSize = 0
+          AutoMaxSize = 0
+          Alignment = taLeftJustify
+          Borders = []
+          BorderPen.Color = clSilver
+          CheckFalse = 'N'
+          CheckTrue = 'Y'
+          Color = 15263976
+          ColumnPopupType = cpFixedCellsRClick
+          EditLength = 0
+          Editor = edNormal
+          FilterCaseSensitive = False
+          Fixed = False
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          Header = 'Producto'
+          MinSize = 0
+          MaxSize = 0
+          Password = False
+          PrintBorders = []
+          PrintColor = clWhite
+          PrintFont.Charset = DEFAULT_CHARSET
+          PrintFont.Color = clWindowText
+          PrintFont.Height = -11
+          PrintFont.Name = 'Tahoma'
+          PrintFont.Style = []
+          ReadOnly = True
+          ShowBands = True
+          SortStyle = ssAutomatic
+          SpinMax = 0
+          SpinMin = 0
+          SpinStep = 1
+          Tag = 0
+          Width = 100
+        end
+        item
+          AutoMinSize = 0
+          AutoMaxSize = 0
+          Alignment = taRightJustify
+          Borders = []
+          BorderPen.Color = clSilver
+          CheckFalse = 'N'
+          CheckTrue = 'Y'
+          Color = 15263976
+          ColumnPopupType = cpFixedCellsRClick
+          EditLength = 0
+          Editor = edNormal
+          FilterCaseSensitive = False
+          Fixed = False
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          Header = 'Volumen'
+          MinSize = 0
+          MaxSize = 0
+          Password = False
+          PrintBorders = []
+          PrintColor = clWhite
+          PrintFont.Charset = DEFAULT_CHARSET
+          PrintFont.Color = clWindowText
+          PrintFont.Height = -11
+          PrintFont.Name = 'Tahoma'
+          PrintFont.Style = []
+          ReadOnly = True
+          ShowBands = True
+          SortStyle = ssAutomatic
+          SpinMax = 0
+          SpinMin = 0
+          SpinStep = 1
+          Tag = 0
+          Width = 90
+        end
+        item
+          AutoMinSize = 0
+          AutoMaxSize = 0
+          Alignment = taRightJustify
+          Borders = []
+          BorderPen.Color = clSilver
+          CheckFalse = 'N'
+          CheckTrue = 'Y'
+          Color = 15263976
+          ColumnPopupType = cpFixedCellsRClick
+          EditLength = 0
+          Editor = edNormal
+          FilterCaseSensitive = False
+          Fixed = False
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          Header = 'Importe'
+          MinSize = 0
+          MaxSize = 0
+          Password = False
+          PrintBorders = []
+          PrintColor = clWhite
+          PrintFont.Charset = DEFAULT_CHARSET
+          PrintFont.Color = clWindowText
+          PrintFont.Height = -11
+          PrintFont.Name = 'Tahoma'
+          PrintFont.Style = []
+          ReadOnly = True
+          ShowBands = True
+          SortStyle = ssAutomatic
+          SpinMax = 0
+          SpinMin = 0
+          SpinStep = 1
+          Tag = 0
+          Width = 90
+        end
+        item
+          AutoMinSize = 0
+          AutoMaxSize = 0
+          Alignment = taRightJustify
+          Borders = []
+          BorderPen.Color = clSilver
+          CheckFalse = 'N'
+          CheckTrue = 'Y'
+          Color = 15263976
+          ColumnPopupType = cpFixedCellsRClick
+          EditLength = 0
+          Editor = edNormal
+          FilterCaseSensitive = False
+          Fixed = False
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          Header = 'Facturado'
+          MinSize = 0
+          MaxSize = 0
+          Password = False
+          PrintBorders = []
+          PrintColor = clWhite
+          PrintFont.Charset = DEFAULT_CHARSET
+          PrintFont.Color = clWindowText
+          PrintFont.Height = -11
+          PrintFont.Name = 'Tahoma'
+          PrintFont.Style = []
+          ReadOnly = False
+          ShowBands = True
+          SortStyle = ssAutomatic
+          SpinMax = 0
+          SpinMin = 0
+          SpinStep = 1
+          Tag = 0
+          Width = 90
+        end
+        item
+          AutoMinSize = 0
+          AutoMaxSize = 0
+          Alignment = taRightJustify
+          Borders = []
+          BorderPen.Color = clSilver
+          CheckFalse = 'N'
+          CheckTrue = 'Y'
+          Color = 15263976
+          ColumnPopupType = cpFixedCellsRClick
+          EditLength = 0
+          Editor = edNormal
+          FilterCaseSensitive = False
+          Fixed = False
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          Header = 'Por Facturar'
+          MinSize = 0
+          MaxSize = 0
+          Password = False
+          PrintBorders = []
+          PrintColor = clWhite
+          PrintFont.Charset = DEFAULT_CHARSET
+          PrintFont.Color = clWindowText
+          PrintFont.Height = -11
+          PrintFont.Name = 'Tahoma'
+          PrintFont.Style = []
+          ReadOnly = False
+          ShowBands = True
+          SortStyle = ssAutomatic
+          SpinMax = 0
+          SpinMin = 0
+          SpinStep = 1
+          Tag = 0
+          Width = 90
+        end
+        item
+          AutoMinSize = 0
+          AutoMaxSize = 0
+          Alignment = taLeftJustify
+          Borders = []
+          BorderPen.Color = clSilver
+          CheckFalse = 'N'
+          CheckTrue = 'Y'
+          Color = 15263976
+          ColumnPopupType = cpFixedCellsRClick
+          EditLength = 0
+          Editor = edNormal
+          FilterCaseSensitive = False
+          Fixed = False
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          MinSize = 0
+          MaxSize = 0
+          Password = False
+          PrintBorders = []
+          PrintColor = clWhite
+          PrintFont.Charset = DEFAULT_CHARSET
+          PrintFont.Color = clWindowText
+          PrintFont.Height = -11
+          PrintFont.Name = 'Tahoma'
+          PrintFont.Style = []
+          ReadOnly = False
+          ShowBands = False
+          SortStyle = ssAutomatic
+          SpinMax = 0
+          SpinMin = 0
+          SpinStep = 1
+          Tag = 0
+          Width = 0
+        end>
+      FilterDropDown.Color = clWindow
+      FilterDropDown.ColumnWidth = False
+      FilterDropDown.Font.Charset = DEFAULT_CHARSET
+      FilterDropDown.Font.Color = clWindowText
+      FilterDropDown.Font.Height = -11
+      FilterDropDown.Font.Name = 'MS Sans Serif'
+      FilterDropDown.Font.Style = []
+      FilterDropDown.Height = 200
+      FilterDropDown.Width = 200
+      ColWidths = (
+        100
+        90
+        90
+        90
+        90
+        0)
+    end
+  end
+  object Panel4: TPanel [7]
+    Left = 0
+    Top = 185
+    Width = 642
+    Height = 283
+    Align = alClient
+    BevelOuter = bvLowered
+    TabOrder = 7
+    object Label2: TLabel
+      Left = 40
+      Top = 12
+      Width = 55
+      Height = 14
+      Alignment = taRightJustify
+      Caption = 'Operacion'
+    end
+    object Label6: TLabel
+      Left = 335
+      Top = 12
+      Width = 32
+      Height = 14
+      Alignment = taRightJustify
+      Caption = 'Fecha'
+    end
+    object Label7: TLabel
+      Left = 75
+      Top = 62
+      Width = 20
+      Height = 14
+      Alignment = taRightJustify
+      Caption = 'NIT'
+    end
+    object Label8: TLabel
+      Left = 324
+      Top = 61
+      Width = 43
+      Height = 14
+      Alignment = taRightJustify
+      Caption = 'Nombre'
+    end
+    object Label9: TLabel
+      Left = 68
+      Top = 87
+      Width = 27
+      Height = 14
+      Alignment = taRightJustify
+      Caption = 'Placa'
+    end
+    object Label10: TLabel
+      Left = 318
+      Top = 86
+      Width = 49
+      Height = 14
+      Alignment = taRightJustify
+      Caption = 'Tipo/Pais'
+    end
+    object Label11: TLabel
+      Left = 33
+      Top = 36
+      Width = 62
+      Height = 14
+      Alignment = taRightJustify
+      Caption = 'Dosificaci'#243'n'
+    end
+    object Label12: TLabel
+      Left = 300
+      Top = 37
+      Width = 67
+      Height = 14
+      Alignment = taRightJustify
+      Caption = 'Factura Nro.'
+    end
+    object lcc: TLabel
+      Left = 469
+      Top = 37
+      Width = 4
+      Height = 14
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object Label13: TLabel
+      Left = 45
+      Top = 132
+      Width = 50
+      Height = 14
+      Alignment = taRightJustify
+      Caption = 'Producto'
+    end
+    object Label14: TLabel
+      Left = 51
+      Top = 156
+      Width = 44
+      Height = 14
+      Alignment = taRightJustify
+      Caption = 'Importe'
+    end
+    object Label15: TLabel
+      Left = 47
+      Top = 180
+      Width = 48
+      Height = 14
+      Alignment = taRightJustify
+      Caption = 'Volumen'
+    end
+    object Label17: TLabel
+      Left = 281
+      Top = 132
+      Width = 86
+      Height = 14
+      Alignment = taRightJustify
+      Caption = 'Precio Internat.'
+    end
+    object Label18: TLabel
+      Left = 295
+      Top = 157
+      Width = 72
+      Height = 14
+      Alignment = taRightJustify
+      Caption = 'Factura YPFB'
+    end
+    object Label19: TLabel
+      Left = 241
+      Top = 181
+      Width = 126
+      Height = 14
+      Alignment = taRightJustify
+      Caption = 'Autorizacion Sustancias'
+    end
+    object Label20: TLabel
+      Left = 50
+      Top = 227
+      Width = 45
+      Height = 14
+      Alignment = taRightJustify
+      Caption = 'Pago en'
+    end
+    object Label21: TLabel
+      Left = 303
+      Top = 227
+      Width = 64
+      Height = 14
+      Alignment = taRightJustify
+      Caption = 'Documento'
+    end
+    object Label22: TLabel
+      Left = 15
+      Top = 252
+      Width = 80
+      Height = 14
+      Alignment = taRightJustify
+      Caption = 'Tarjeta Cliente'
+    end
+    object cHorario: TsuiComboBox
+      Left = 98
+      Top = 8
+      Width = 160
+      Height = 22
+      UIStyle = DeepBlue
+      BorderColor = clBlack
+      ArrowColor = clBlack
+      ButtonColor = 15263976
+      Style = csDropDownList
+      Color = clBtnFace
+      ItemHeight = 14
+      ItemIndex = 0
+      TabOrder = 0
+      Text = 'Venta'
+      Items.Strings = (
+        'Venta'
+        'Calibracion')
+    end
+    object cDAYTIME: TJvDateEdit
+      Left = 370
+      Top = 8
+      Width = 95
+      Height = 20
+      Color = clBtnFace
+      Flat = True
+      ParentFlat = False
+      TabOrder = 1
+    end
+    object cCode: TsuiEdit
+      Left = 98
+      Top = 57
+      Width = 160
+      Height = 22
+      UIStyle = DeepBlue
+      BorderColor = clBlack
+      CharCase = ecUpperCase
+      Color = clBtnFace
+      MaxLength = 10
+      TabOrder = 4
+      Text = 'CCODE'
+    end
+    object suiEdit1: TsuiEdit
+      Left = 370
+      Top = 57
+      Width = 255
+      Height = 22
+      UIStyle = DeepBlue
+      BorderColor = clBlack
+      CharCase = ecUpperCase
+      Color = clBtnFace
+      MaxLength = 30
+      TabOrder = 5
+      Text = 'CCODE'
+    end
+    object suiEdit2: TsuiEdit
+      Left = 98
+      Top = 82
+      Width = 160
+      Height = 22
+      UIStyle = DeepBlue
+      BorderColor = clBlack
+      CharCase = ecUpperCase
+      Color = clBtnFace
+      MaxLength = 12
+      TabOrder = 6
+      Text = 'CCODE'
+    end
+    object suiComboBox1: TsuiComboBox
+      Left = 370
+      Top = 82
+      Width = 196
+      Height = 22
+      UIStyle = DeepBlue
+      BorderColor = clBlack
+      ArrowColor = clBlack
+      ButtonColor = 15263976
+      Style = csDropDownList
+      Color = clBtnFace
+      ItemHeight = 14
+      TabOrder = 7
+    end
+    object suiComboBox2: TsuiComboBox
+      Left = 568
+      Top = 82
+      Width = 57
+      Height = 22
+      UIStyle = DeepBlue
+      BorderColor = clBlack
+      ArrowColor = clBlack
+      ButtonColor = 15263976
+      Style = csDropDownList
+      Color = clBtnFace
+      ItemHeight = 14
+      TabOrder = 8
+    end
+    object suiEdit4: TsuiEdit
+      Left = 370
+      Top = 33
+      Width = 95
+      Height = 22
+      UIStyle = DeepBlue
+      BorderColor = clBlack
+      CharCase = ecUpperCase
+      Color = clBtnFace
+      TabOrder = 3
+      Text = 'CCODE'
+    end
+    object suiComboBox3: TsuiComboBox
+      Left = 98
+      Top = 32
+      Width = 160
+      Height = 22
+      UIStyle = DeepBlue
+      BorderColor = clBlack
+      ArrowColor = clBlack
+      ButtonColor = 15263976
+      Style = csDropDownList
+      Color = clBtnFace
+      ItemHeight = 14
+      TabOrder = 2
+    end
+    object suiComboBox4: TsuiComboBox
+      Left = 98
+      Top = 128
+      Width = 127
+      Height = 22
+      UIStyle = DeepBlue
+      BorderColor = clBlack
+      ArrowColor = clBlack
+      ButtonColor = 15263976
+      Style = csDropDownList
+      Color = clBtnFace
+      ItemHeight = 14
+      TabOrder = 9
+    end
+    object JvValidateEdit1: TJvValidateEdit
+      Left = 227
+      Top = 128
+      Width = 32
+      Height = 20
+      TabStop = False
+      Flat = True
+      ParentFlat = False
+      Color = clBtnFace
+      CriticalPoints.MaxValueIncluded = False
+      CriticalPoints.MinValueIncluded = False
+      DisplayFormat = dfFloat
+      DecimalPlaces = 2
+      ReadOnly = True
+      TabOrder = 10
+    end
+    object JvValidateEdit2: TJvValidateEdit
+      Left = 98
+      Top = 153
+      Width = 127
+      Height = 20
+      Flat = True
+      ParentFlat = False
+      Color = clBtnFace
+      CriticalPoints.MaxValueIncluded = False
+      CriticalPoints.MinValueIncluded = False
+      DisplayFormat = dfFloat
+      DecimalPlaces = 2
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clBlack
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 11
+    end
+    object JvValidateEdit3: TJvValidateEdit
+      Left = 98
+      Top = 178
+      Width = 127
+      Height = 20
+      TabStop = False
+      Flat = True
+      ParentFlat = False
+      Color = clBtnFace
+      CriticalPoints.MaxValueIncluded = False
+      CriticalPoints.MinValueIncluded = False
+      DisplayFormat = dfFloat
+      DecimalPlaces = 2
+      ReadOnly = True
+      TabOrder = 12
+    end
+    object JvValidateEdit4: TJvValidateEdit
+      Left = 371
+      Top = 128
+      Width = 95
+      Height = 20
+      Flat = True
+      ParentFlat = False
+      Color = clBtnFace
+      CriticalPoints.MaxValueIncluded = False
+      CriticalPoints.MinValueIncluded = False
+      DisplayFormat = dfFloat
+      DecimalPlaces = 2
+      TabOrder = 13
+    end
+    object suiEdit3: TsuiEdit
+      Left = 370
+      Top = 153
+      Width = 95
+      Height = 22
+      UIStyle = DeepBlue
+      BorderColor = clBlack
+      CharCase = ecUpperCase
+      Color = clBtnFace
+      TabOrder = 14
+      Text = 'CCODE'
+    end
+    object suiEdit5: TsuiEdit
+      Left = 370
+      Top = 177
+      Width = 95
+      Height = 22
+      UIStyle = DeepBlue
+      BorderColor = clBlack
+      CharCase = ecUpperCase
+      Color = clBtnFace
+      MaxLength = 10
+      TabOrder = 15
+      Text = 'CCODE'
+    end
+    object cSELLERID: TsuiDBLookupComboBox
+      Left = 98
+      Top = 224
+      Width = 160
+      Height = 22
+      Color = clBtnFace
+      KeyField = 'id'
+      ListField = 'nombre'
+      TabOrder = 16
+      UIStyle = DeepBlue
+      BorderColor = clBlack
+      ArrowColor = clBlack
+      ButtonColor = 15263976
+    end
+    object suiEdit6: TsuiEdit
+      Left = 370
+      Top = 224
+      Width = 95
+      Height = 22
+      UIStyle = DeepBlue
+      BorderColor = clBlack
+      CharCase = ecUpperCase
+      Color = clBtnFace
+      MaxLength = 10
+      TabOrder = 17
+      Text = 'CCODE'
+    end
+    object suiEdit7: TsuiEdit
+      Left = 98
+      Top = 249
+      Width = 159
+      Height = 22
+      UIStyle = DeepBlue
+      BorderColor = clBlack
+      CharCase = ecUpperCase
+      Color = clBtnFace
+      MaxLength = 22
+      TabOrder = 18
+      Text = 'CCODE'
+    end
+  end
+  inherited cds: TAstaClientDataSet
+    Left = 266
+    Top = 6
+    FastFields = ()
+    FMultiTable = ()
+    UpdateMethod = umManual
+  end
+  inherited dsNav: TDataSource
+    Left = 296
+    Top = 6
+  end
+end

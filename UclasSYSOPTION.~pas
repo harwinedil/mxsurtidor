@@ -1,0 +1,743 @@
+UNIT UclasSYSOPTION;
+
+{
+GENERADO AUTOMATICAMENTE POR "Generador v.2012"
+AUTOR              : HARWIN EDIL PEREZ SALINAS   [harwinedil@gmail.com]
+DESCRIPCION        : Clase para interactuar con la Tabla : SYSOPTION
+FECHA CREACION     : 04/12/2012 Hora: 23:07:30
+ULTIMA MODIFICACION: 04/12/2012 Hora: 23:07:30
+MODIFICADO POR     : HARWIN EDIL PEREZ SALINAS
+OBSERVACIONES      :
+
+}
+
+INTERFACE
+
+USES
+  sysUtils,uLkJSON,AstaDrv2,AstaClientDataset,AstaParamList,UBaseObject,Uconstantes,
+  forms, classes,UGralUtilidades,UclasSYSUSER,DBCtrls,SUIDBCtrls;
+
+
+TYPE
+	PSYSOPTION = ^TSYSOPTION;
+	TSYSOPTION = CLASS(TBaseObject)
+	PRIVATE
+		aID        	: Integer;
+		aDESCRIPTION	: String[128];
+		aCALL      	: String[128];
+		aKEY0      	: Integer;
+		aPARENTID  	: Integer;
+		aISLEVEL   	: Integer;
+		aAPPID     	: Integer;
+		aCREATED   	: TDateTime;
+		aUCREATED  	: Integer;
+		aUPDATED   	: TDateTime;
+		aUUPDATED  	: Integer;
+		aCONCURRENCY	: Integer;
+		aSTATUS    	: String[1];
+	PUBLIC
+    parentName : string;
+		CONSTRUCTOR     Create;		OVERLOAD;
+		CONSTRUCTOR     Create(pID:Integer; pDESCRIPTION:String; pCALL:String; pKEY0:Integer; pPARENTID:Integer; pISLEVEL:Integer; pAPPID:Integer; pCREATED:TDateTime; pUCREATED:Integer; pUPDATED:TDateTime; pUUPDATED:Integer; pCONCURRENCY:Integer; pSTATUS:String); OVERLOAD;
+		CONSTRUCTOR     Create(const pObjeto:TSYSOPTION);OVERLOAD;
+		DESTRUCTOR      Destroy;	OVERRIDE;
+		PROCEDURE       init;		OVERRIDE;
+		PROCEDURE       setAtributos(pID:Integer; pDESCRIPTION:String; pCALL:String; pKEY0:Integer; pPARENTID:Integer; pISLEVEL:Integer; pAPPID:Integer; pCREATED:TDateTime; pUCREATED:Integer; pUPDATED:TDateTime; pUUPDATED:Integer; pCONCURRENCY:Integer; pSTATUS:String);
+
+		PROCEDURE       fromJson(o:TlkJSONobject); OVERRIDE;
+		PROCEDURE       fromJsonString(s:string);  OVERRIDE;
+		FUNCTION        toJsonString : string; OVERRIDE;
+		FUNCTION        sqlGetField(field:string) : string; OVERRIDE;
+		FUNCTION        sqlGetKeyValue(key,value : string) : string; OVERRIDE;
+		FUNCTION        sqlGetAll : string; OVERRIDE;
+		PROCEDURE       QBE( columns,where :string ; ClientDS: TAstaClientDataSet; params:TAstaParamList=NIL); OVERLOAD;OVERRIDE;
+		PROCEDURE       filtrar(cds:TAstaClientDataSet; where:string = ''; params:TAstaParamList=NIL); OVERRIDE;
+		PROCEDURE       QBE(ClientDS: TAstaClientDataSet; where:string = '';params:TAstaParamList=NIL);  OVERLOAD;OVERRIDE;
+
+		FUNCTION        save(ClientDS: TAstaClientDataSet; transacction: byte) : byte; OVERRIDE;
+		FUNCTION        exist(ClientDS: TAstaClientDataSet) : boolean;OVERRIDE;
+		PROCEDURE       fromClientDataSet(ClientDS: TAstaClientDataSet);OVERRIDE;
+    function        toList(ClientDS: TAstaClientDataSet): TList;
+		PROCEDURE       fromGUI(form:TForm ); OVERRIDE;
+		PROCEDURE       toGUI(form:TForm ); OVERRIDE;
+		PROCEDURE       nextID(ClientDS: TAstaClientDataSet); OVERRIDE;
+
+		PROCEDURE   	setID(pID:Integer);
+		PROCEDURE   	setDESCRIPTION(pDESCRIPTION:String);
+		PROCEDURE   	setCALL(pCALL:String);
+		PROCEDURE   	setKEY0(pKEY0:Integer);
+		PROCEDURE   	setPARENTID(pPARENTID:Integer);
+		PROCEDURE   	setISLEVEL(pISLEVEL:Integer);
+		PROCEDURE   	setAPPID(pAPPID:Integer);
+		PROCEDURE   	setCREATED(pCREATED:TDateTime);
+		PROCEDURE   	setUCREATED(pUCREATED:Integer);
+		PROCEDURE   	setUPDATED(pUPDATED:TDateTime);
+		PROCEDURE   	setUUPDATED(pUUPDATED:Integer);
+		PROCEDURE   	setCONCURRENCY(pCONCURRENCY:Integer);
+		PROCEDURE   	setSTATUS(pSTATUS:String);
+
+		FUNCTION    	getID          	:Integer;
+		FUNCTION    	getDESCRIPTION 	:String;
+		FUNCTION    	getCALL        	:String;
+		FUNCTION    	getKEY0        	:Integer;
+		FUNCTION    	getPARENTID    	:Integer;
+		FUNCTION    	getISLEVEL     	:Integer;
+		FUNCTION    	getAPPID       	:Integer;
+		FUNCTION    	getCREATED     	:TDateTime;
+		FUNCTION    	getUCREATED    	:Integer;
+		FUNCTION    	getUPDATED     	:TDateTime;
+		FUNCTION    	getUUPDATED    	:Integer;
+		FUNCTION    	getCONCURRENCY 	:Integer;
+		FUNCTION    	getSTATUS      	:String;
+
+		PROPERTY    	ID           : Integer   	read getID          	write setID          ;
+		PROPERTY    	DESCRIPTION  : String    	read getDESCRIPTION 	write setDESCRIPTION ;
+		PROPERTY    	CALL         : String    	read getCALL        	write setCALL        ;
+		PROPERTY    	KEY0         : Integer   	read getKEY0        	write setKEY0        ;
+		PROPERTY    	PARENTID     : Integer   	read getPARENTID    	write setPARENTID    ;
+		PROPERTY    	ISLEVEL      : Integer   	read getISLEVEL     	write setISLEVEL     ;
+		PROPERTY    	APPID        : Integer   	read getAPPID       	write setAPPID       ;
+		PROPERTY    	CREATED      : TDateTime 	read getCREATED     	write setCREATED     ;
+		PROPERTY    	UCREATED     : Integer   	read getUCREATED    	write setUCREATED    ;
+		PROPERTY    	UPDATED      : TDateTime 	read getUPDATED     	write setUPDATED     ;
+		PROPERTY    	UUPDATED     : Integer   	read getUUPDATED    	write setUUPDATED    ;
+		PROPERTY    	CONCURRENCY  : Integer   	read getCONCURRENCY 	write setCONCURRENCY ;
+		PROPERTY    	STATUS       : String    	read getSTATUS      	write setSTATUS      ;
+
+		
+	END;
+
+IMPLEMENTATION
+{TSYSOPTION}
+
+CONSTRUCTOR TSYSOPTION.Create;
+BEGIN
+	aID         := 0;
+	aDESCRIPTION:= '';
+	aCALL       := '';
+	aKEY0       := 0;
+	aPARENTID   := 0;
+	aISLEVEL    := 0;
+	aAPPID      := 0;
+	aCREATED    := 0;
+	aUCREATED   := 0;
+	aUPDATED    := 0;
+	aUUPDATED   := 0;
+	aCONCURRENCY:= 0;
+	aSTATUS     := '';	
+	autocommit := true;												
+END;
+
+CONSTRUCTOR TSYSOPTION.Create(pID:Integer; pDESCRIPTION:String; pCALL:String; pKEY0:Integer; pPARENTID:Integer; pISLEVEL:Integer; pAPPID:Integer; pCREATED:TDateTime; pUCREATED:Integer; pUPDATED:TDateTime; pUUPDATED:Integer; pCONCURRENCY:Integer; pSTATUS:String);
+BEGIN
+	aID         := pID         ;
+	aDESCRIPTION:= pDESCRIPTION;
+	aCALL       := pCALL       ;
+	aKEY0       := pKEY0       ;
+	aPARENTID   := pPARENTID   ;
+	aISLEVEL    := pISLEVEL    ;
+	aAPPID      := pAPPID      ;
+	aCREATED    := pCREATED    ;
+	aUCREATED   := pUCREATED   ;
+	aUPDATED    := pUPDATED    ;
+	aUUPDATED   := pUUPDATED   ;
+	aCONCURRENCY:= pCONCURRENCY;
+	aSTATUS     := pSTATUS     ;
+	autocommit := true;
+END;
+
+CONSTRUCTOR TSYSOPTION.Create(const pObjeto:TSYSOPTION);
+BEGIN
+	aID         := pObjeto.ID         ;
+	aDESCRIPTION:= pObjeto.DESCRIPTION;
+	aCALL       := pObjeto.CALL       ;
+	aKEY0       := pObjeto.KEY0       ;
+	aPARENTID   := pObjeto.PARENTID   ;
+	aISLEVEL    := pObjeto.ISLEVEL    ;
+	aAPPID      := pObjeto.APPID      ;
+	aCREATED    := pObjeto.CREATED    ;
+	aUCREATED   := pObjeto.UCREATED   ;
+	aUPDATED    := pObjeto.UPDATED    ;
+	aUUPDATED   := pObjeto.UUPDATED   ;
+	aCONCURRENCY:= pObjeto.CONCURRENCY;
+	aSTATUS     := pObjeto.STATUS     ;
+	autocommit := pObjeto.autocommit;
+END;
+
+DESTRUCTOR TSYSOPTION.Destroy;
+BEGIN
+	
+	inherited Destroy;
+END;
+
+PROCEDURE TSYSOPTION.init;
+BEGIN
+	aID         := 0;
+	aDESCRIPTION:= '';
+	aCALL       := '';
+	aKEY0       := 0;
+	aPARENTID   := 0;
+	aISLEVEL    := 0;
+	aAPPID      := 0;
+	aCREATED    := 0;
+	aUCREATED   := 0;
+	aUPDATED    := 0;
+	aUUPDATED   := 0;
+	aCONCURRENCY:= 0;
+	aSTATUS     := '';														
+END;
+
+PROCEDURE TSYSOPTION.fromJsonString(s:string);
+BEGIN
+	self.fromJson(TlkJSON.ParseText(s) as TlkJSONobject);
+END;
+
+PROCEDURE TSYSOPTION.fromJson(o:TlkJSONobject);
+BEGIN
+	ID          := (o.Field['ID'] as TlkJSONnumber).Value;
+	DESCRIPTION := (o.Field['DESCRIPTION'] as TlkJSONstring).Value;
+	CALL        := (o.Field['CALL'] as TlkJSONstring).Value;
+	KEY0        := (o.Field['KEY0'] as TlkJSONnumber).Value;
+	PARENTID    := (o.Field['PARENTID'] as TlkJSONnumber).Value;
+	ISLEVEL     := (o.Field['ISLEVEL'] as TlkJSONnumber).Value;
+	APPID       := (o.Field['APPID'] as TlkJSONnumber).Value;
+	CREATED     := (o.Field['CREATED'] as TlkJSONnumber).Value;
+	UCREATED    := (o.Field['UCREATED'] as TlkJSONnumber).Value;
+	UPDATED     := (o.Field['UPDATED'] as TlkJSONnumber).Value;
+	UUPDATED    := (o.Field['UUPDATED'] as TlkJSONnumber).Value;
+	CONCURRENCY := (o.Field['CONCURRENCY'] as TlkJSONnumber).Value;
+	STATUS      := (o.Field['STATUS'] as TlkJSONstring).Value;
+END;
+
+FUNCTION TSYSOPTION.toJsonString : string;
+var  json : TlkJSONobject;
+BEGIN
+	json := TlkJSONobject.Create();
+	TRY	
+		json.Add('ID',TlkJSONNumber.Generate(ID));
+		json.Add('DESCRIPTION',TlkJSONstring.Generate(DESCRIPTION));
+		json.Add('CALL',TlkJSONstring.Generate(CALL));
+		json.Add('KEY0',TlkJSONNumber.Generate(KEY0));
+		json.Add('PARENTID',TlkJSONNumber.Generate(PARENTID));
+		json.Add('ISLEVEL',TlkJSONNumber.Generate(ISLEVEL));
+		json.Add('APPID',TlkJSONNumber.Generate(APPID));
+		json.Add('CREATED',TlkJSONNumber.Generate(CREATED));
+		json.Add('UCREATED',TlkJSONNumber.Generate(UCREATED));
+		json.Add('UPDATED',TlkJSONNumber.Generate(UPDATED));
+		json.Add('UUPDATED',TlkJSONNumber.Generate(UUPDATED));
+		json.Add('CONCURRENCY',TlkJSONNumber.Generate(CONCURRENCY));
+		json.Add('STATUS',TlkJSONstring.Generate(STATUS));
+	FINALLY
+		RESULT := TlkJSON.GenerateText(json);
+		FreeAndNIL(json);
+	END;
+END;
+
+
+PROCEDURE TSYSOPTION.setAtributos(pID:Integer; pDESCRIPTION:String; pCALL:String; pKEY0:Integer; pPARENTID:Integer; pISLEVEL:Integer; pAPPID:Integer; pCREATED:TDateTime; pUCREATED:Integer; pUPDATED:TDateTime; pUUPDATED:Integer; pCONCURRENCY:Integer; pSTATUS:String);		
+BEGIN
+	aID         := pID         ;
+	aDESCRIPTION:= pDESCRIPTION;
+	aCALL       := pCALL       ;
+	aKEY0       := pKEY0       ;
+	aPARENTID   := pPARENTID   ;
+	aISLEVEL    := pISLEVEL    ;
+	aAPPID      := pAPPID      ;
+	aCREATED    := pCREATED    ;
+	aUCREATED   := pUCREATED   ;
+	aUPDATED    := pUPDATED    ;
+	aUUPDATED   := pUUPDATED   ;
+	aCONCURRENCY:= pCONCURRENCY;
+	aSTATUS     := pSTATUS     ;	
+END;
+
+FUNCTION TSYSOPTION.sqlGetField(field:string) : string;
+BEGIN
+	RESULT := 'select '+field+' from security_option order by '+field;
+END;
+
+FUNCTION TSYSOPTION.sqlGetKeyValue(key,value : string) : string;
+BEGIN
+	RESULT := 'select '+key+' as key,'+value+'as value from security_option order by '+value;
+END;
+
+FUNCTION  TSYSOPTION.sqlGetAll : string;
+BEGIN
+	RESULT := 'select * from security_option';
+END;
+
+PROCEDURE TSYSOPTION.filtrar(cds:TAstaClientDataSet; where:string = ''; params:TAstaParamList=NIL);
+var  	y : string;
+	i : word;
+BEGIN
+	y := ' where ';
+	IF SELF.ID<>0 THEN
+	BEGIN
+		cds.sql.add( y +'ID= :pID');
+		cds.ParamByName('pID').asInteger	:= SELF.ID;
+		y := ' and ';
+	END;
+
+	IF SELF.DESCRIPTION<>'' THEN
+	BEGIN
+		cds.sql.add( y +'DESCRIPTION= :pDESCRIPTION');
+		cds.ParamByName('pDESCRIPTION').asString	:= SELF.DESCRIPTION;
+		y := ' and ';
+	END;
+
+	IF SELF.CALL<>'' THEN
+	BEGIN
+		cds.sql.add( y +'CALL= :pCALL');
+		cds.ParamByName('pCALL').asString	:= SELF.CALL;
+		y := ' and ';
+	END;
+
+	IF SELF.KEY0<>0 THEN
+	BEGIN
+		cds.sql.add( y +'KEY0= :pKEY0');
+		cds.ParamByName('pKEY0').asInteger	:= SELF.KEY0;
+		y := ' and ';
+	END;
+
+	IF SELF.PARENTID<>0 THEN
+	BEGIN
+		cds.sql.add( y +'PARENT= :pPARENTID');
+		cds.ParamByName('pPARENTID').asInteger	:= SELF.PARENTID;
+		y := ' and ';
+	END;
+
+	IF SELF.ISLEVEL<>0 THEN
+	BEGIN
+		cds.sql.add( y +'ISLEVEL= :pISLEVEL');
+		cds.ParamByName('pISLEVEL').asInteger	:= SELF.ISLEVEL;
+		y := ' and ';
+	END;
+
+	IF SELF.APPID<>0 THEN
+	BEGIN
+		cds.sql.add( y +'APP_ID= :pAPPID');
+		cds.ParamByName('pAPPID').asInteger	:= SELF.APPID;
+		y := ' and ';
+	END;
+
+	IF SELF.CREATED<>0 THEN
+	BEGIN
+		cds.sql.add( y +'CREATED= :pCREATED');
+		cds.ParamByName('pCREATED').asDateTime	:= SELF.CREATED;
+		y := ' and ';
+	END;
+
+  {
+	IF SELF.UCREATED<>0 THEN
+	BEGIN
+		cds.sql.add( y +'UCREATED= :pUCREATED');
+		cds.ParamByName('pUCREATED').asInteger	:= SELF.UCREATED;
+		y := ' and ';
+	END;
+
+	IF SELF.UPDATED<>0 THEN
+	BEGIN
+		cds.sql.add( y +'UPDATED= :pUPDATED');
+		cds.ParamByName('pUPDATED').asDateTime	:= SELF.UPDATED;
+		y := ' and ';
+	END;
+
+	IF SELF.UUPDATED<>0 THEN
+	BEGIN
+		cds.sql.add( y +'UUPDATED= :pUUPDATED');
+		cds.ParamByName('pUUPDATED').asInteger	:= SELF.UUPDATED;
+		y := ' and ';
+	END;
+
+	IF SELF.CONCURRENCY<>0 THEN
+	BEGIN
+		cds.sql.add( y +'CONCURRENCY= :pCONCURRENCY');
+		cds.ParamByName('pCONCURRENCY').asInteger	:= SELF.CONCURRENCY;
+		y := ' and ';
+	END;
+
+	IF SELF.STATUS<>'' THEN
+	BEGIN
+		cds.sql.add( y +'STATUS= :pSTATUS');
+		cds.ParamByName('pSTATUS').asString	:= SELF.STATUS;
+		y := ' and ';
+	END;
+   }
+
+	if where <> '' then
+	begin
+	cds.sql.add(where);
+	for i:=0 to params.count-1 do
+		cds.params.AddOneParamItem(params.items[i]);
+	end;
+END;
+
+
+PROCEDURE TSYSOPTION.QBE(ClientDS: TAstaClientDataSet; where:string = ''; params:TAstaParamList=NIL);
+BEGIN
+	initDataSet(ClientDS);
+	clientDS.sql.add(sqlGetAll);
+	filtrar(ClientDS,where,params);
+	clientDS.prepare;
+	clientDS.Open;
+END;
+
+PROCEDURE TSYSOPTION.QBE(columns,where :string ; ClientDS: TAstaClientDataSet; params:TAstaParamList=NIL);
+BEGIN
+	initDataSet(ClientDS);
+	clientDS.sql.add('select '+columns+ ' from security_option');
+	ClientDS.SQL.Add('where '+where);
+
+	if params <> NIL then
+		ClientDS.Params := params;
+
+	clientDS.prepare;
+	clientDS.Open;
+END;
+
+function TSYSOPTION.exist(ClientDS: TAstaClientDataSet): boolean;
+begin
+	initDataSet(ClientDS);
+	ClientDS.SQL.Add('select id from security_option where ID=:pID');
+	ClientDS.ParamByName('pID').AsInteger := SELF.ID;
+	ClientDS.Open;
+
+	Result := not ClientDS.IsEmpty;
+end;
+
+procedure TSYSOPTION.fromClientDataSet(ClientDS: TAstaClientDataSet);
+begin
+	inherited;
+	IF NOT ClientDS.Active THEN EXIT;
+	SELF.ID          := clientDS.FieldByName('ID').AsInteger;
+	SELF.DESCRIPTION := clientDS.FieldByName('DESCRIPTION').AsString;
+	SELF.CALL        := clientDS.FieldByName('CALL').AsString;
+	SELF.KEY0        := clientDS.FieldByName('KEY0').AsInteger;
+	SELF.PARENTID    := clientDS.FieldByName('PARENT').AsInteger;
+	SELF.ISLEVEL     := clientDS.FieldByName('ISLEVEL').AsInteger;
+	SELF.APPID       := clientDS.FieldByName('APPID').AsInteger;
+	SELF.CREATED     := clientDS.FieldByName('CREATED').AsDateTime;
+	SELF.UCREATED    := clientDS.FieldByName('UCREATED_ID').AsInteger;
+	SELF.UPDATED     := clientDS.FieldByName('UPDATED').AsDateTime;
+	SELF.UUPDATED    := clientDS.FieldByName('UUPDATED_ID').AsInteger;
+	SELF.CONCURRENCY := clientDS.FieldByName('CONCURRENCY').AsInteger;
+	SELF.STATUS      := clientDS.FieldByName('STATUS').AsString;
+end;
+
+
+procedure TSYSOPTION.fromGUI(form: TForm);
+begin
+	with form do
+	begin
+{		SELF.ID         := utils.formObtenerPropiedad(FindComponent('cID'),'Text');
+		SELF.DESCRIPTION:= utils.formObtenerPropiedad(FindComponent('cDESCRIPTION'),'Text');
+		SELF.CALL       := utils.formObtenerPropiedad(FindComponent('cCALL'),'Text');
+		SELF.KEY0       := utils.formObtenerPropiedad(FindComponent('cKEY0'),'Text');
+		SELF.PARENTID   := utils.formObtenerPropiedad(FindComponent('cPARENTID'),'Text');
+		SELF.ISLEVEL    := utils.formObtenerPropiedad(FindComponent('cISLEVEL'),'Text');
+		SELF.APPID      := utils.formObtenerPropiedad(FindComponent('cAPPID'),'Text');
+		SELF.CREATED    := now;
+		SELF.UCREATED   := Guser.ID;
+		SELF.UPDATED    := now;
+		SELF.UUPDATED   := Guser.ID;
+		SELF.CONCURRENCY:= 0;
+		SELF.STATUS     := utils.formObtenerPropiedad(FindComponent('cSTATUS'),'Text');
+}
+	end;
+end;
+
+procedure TSYSOPTION.toGUI(form: TForm);
+begin
+	inherited;
+	with form do
+	begin
+{	utils.formAsignaPropiedad(FindComponent('cID'),'Text', IntTOStr(SELF.ID));
+	utils.formAsignaPropiedad(FindComponent('cDESCRIPTION'),'Text', (SELF.DESCRIPTION));
+	utils.formAsignaPropiedad(FindComponent('cCALL'),'Text', (SELF.CALL));
+	utils.formAsignaPropiedad(FindComponent('cKEY0'),'Text', IntTOStr(SELF.KEY0));
+	utils.formAsignaPropiedad(FindComponent('cPARENTID'),'Text', IntTOStr(SELF.PARENTID));
+	utils.formAsignaPropiedad(FindComponent('cISLEVEL'),'Text', IntTOStr(SELF.ISLEVEL));
+	utils.formAsignaPropiedad(FindComponent('cAPPID'),'Text', IntTOStr(SELF.APPID));
+//	utils.formAsignaPropiedad(FindComponent('cCREATED'),'Text', IntTOStr(SELF.CREATED));
+//	utils.formAsignaPropiedad(FindComponent('cUCREATED'),'Text', IntTOStr(SELF.UCREATED));
+//	utils.formAsignaPropiedad(FindComponent('cUPDATED'),'Text', IntTOStr(SELF.UPDATED));
+//	utils.formAsignaPropiedad(FindComponent('cUUPDATED'),'Text', IntTOStr(SELF.UUPDATED));
+//	utils.formAsignaPropiedad(FindComponent('cCONCURRENCY'),'Text', IntTOStr(SELF.CONCURRENCY));
+	utils.formAsignaPropiedad(FindComponent('cSTATUS'),'Text', (SELF.STATUS));
+  }
+	end;
+end;
+
+function TSYSOPTION.save(ClientDS: TAstaClientDataSet;transacction: byte): byte;
+var   date : TDateTime;
+begin
+	RESULT := cFalse;
+	date := self.getFechaHoraServer(ClientDS);
+	initDataSet(ClientDS);
+
+//	if autocommit then
+//		ClientDS.AstaClientSocket.StartTransaction;
+
+   TRY
+
+	case transacction of
+
+	1 : begin         //update
+		ClientDS.SQL.Add('UPDATE security_option SET '+
+				'DESCRIPTION = :pDESCRIPTION'+
+				',CALL = :pCALL'+
+				',KEY0 = :pKEY0'+
+				',PARENT = :pPARENTID'+
+				',ISLEVEL = :pISLEVEL'+
+				',APP_ID = :pAPPID'+
+				',CREATED = :pCREATED'+
+				',UCREATED_id = :pUCREATED'+
+				',UPDATED = :pUPDATED'+
+				',UUPDATED_id = :pUUPDATED'+
+				',CONCURRENCY = :pCONCURRENCY'+
+				',STATUS = :pSTATUS'+
+				' WHERE ID = :pID'
+		);
+		ClientDS.ParamByName('pID').asInteger                := SELF.ID;
+		ClientDS.ParamByName('pDESCRIPTION').asString        := SELF.DESCRIPTION;
+		ClientDS.ParamByName('pCALL').asString               := SELF.CALL;
+		ClientDS.ParamByName('pKEY0').asInteger              := SELF.KEY0;
+		ClientDS.ParamByName('pPARENTID').asInteger          := SELF.PARENTID;
+		ClientDS.ParamByName('pISLEVEL').asInteger           := SELF.ISLEVEL;
+		ClientDS.ParamByName('pAPPID').asInteger             := SELF.APPID;
+		ClientDS.ParamByName('pCREATED').asDatetime          := SELF.CREATED;
+		ClientDS.ParamByName('pUCREATED').asInteger          := SELF.UCREATED;
+		ClientDS.ParamByName('pUPDATED').asDatetime          := SELF.UPDATED;
+		ClientDS.ParamByName('pUUPDATED').asInteger          := SELF.UUPDATED;
+		ClientDS.ParamByName('pCONCURRENCY').asInteger       := SELF.CONCURRENCY;
+		ClientDS.ParamByName('pSTATUS').asString             := SELF.STATUS;
+	end;
+
+	0: begin	//insert
+		SELF.nextID(clientDS);
+
+		initDataSet(ClientDS);
+		ClientDS.SQL.Add('INSERT INTO security_option (ID,DESCRIPTION,CALL,KEY0,PARENT,ISLEVEL,APP_ID,CREATED,UCREATED_ID,UPDATED,UUPDATED_ID,CONCURRENCY,STATUS)');
+		ClientDS.SQL.Add(' VALUES ');
+		ClientDS.SQL.Add('(:pID,:pDESCRIPTION,:pCALL,:pKEY0,:pPARENTID,:pISLEVEL,:pAPPID,:pCREATED,:pUCREATED,:pUPDATED,:pUUPDATED,:pCONCURRENCY,:pSTATUS)');
+		ClientDS.ParamByName('pID').asInteger                := SELF.ID;
+		ClientDS.ParamByName('pDESCRIPTION').asString        := SELF.DESCRIPTION;
+		ClientDS.ParamByName('pCALL').asString               := SELF.CALL;
+		ClientDS.ParamByName('pKEY0').asInteger              := SELF.KEY0;
+		ClientDS.ParamByName('pPARENTID').asInteger          := SELF.PARENTID;
+		ClientDS.ParamByName('pISLEVEL').asInteger           := SELF.ISLEVEL;
+		ClientDS.ParamByName('pAPPID').asInteger             := SELF.APPID;
+		ClientDS.ParamByName('pCREATED').asDatetime          := SELF.CREATED;
+		ClientDS.ParamByName('pUCREATED').asInteger          := SELF.UCREATED;
+		ClientDS.ParamByName('pUPDATED').asDatetime          := SELF.UPDATED;
+		ClientDS.ParamByName('pUUPDATED').asInteger          := SELF.UUPDATED;
+		ClientDS.ParamByName('pCONCURRENCY').asInteger       := SELF.CONCURRENCY;
+		ClientDS.ParamByName('pSTATUS').asString             := SELF.STATUS;
+	end;
+
+	2: begin //delete
+		ClientDS.SQL.Add('delete from SYSOPTION where id =:pid');
+		ClientDS.ParamByName('pID').asInteger := SELF.ID;
+	end;
+
+	4: begin //enable
+		ClientDS.SQL.Add('update SYSOPTION set status=:pstatus where id =:pid');
+		ClientDS.ParamByName('pID').asInteger    := SELF.ID;
+		ClientDS.ParamByName('pstatus').asString := '1';
+	end;
+
+	5: begin //disable
+		ClientDS.SQL.Add('update SYSOPTION set status=:pstatus where id =:pid');
+		ClientDS.ParamByName('pID').asInteger    := SELF.ID;
+		ClientDS.ParamByName('pstatus').asString := '0';
+	end;
+
+	end;
+	if autocommit then
+		ClientDS.AstaClientSocket.StartTransaction;
+
+	ClientDS.ExecSQL;
+	Result := cTrue;
+
+   FINALLY
+	if autocommit then
+			ClientDS.AstaClientSocket.EndTransaction(true);
+   END;
+end;
+
+procedure TSYSOPTION.nextID(ClientDS: TAstaClientDataSet);
+begin
+		 initDataSet(ClientDS);
+
+		 ClientDS.SQL.Add('select max(ID) as sub from security_option');
+		 ClientDS.Open;
+		 self.ID  := ClientDS.fieldbyName('sub').AsInteger + 1;
+end;
+
+
+PROCEDURE TSYSOPTION.setID(pID:Integer);
+BEGIN
+	aID:= pID;
+END;
+
+PROCEDURE TSYSOPTION.setDESCRIPTION(pDESCRIPTION:String);
+BEGIN
+	aDESCRIPTION:= pDESCRIPTION;
+END;
+
+PROCEDURE TSYSOPTION.setCALL(pCALL:String);
+BEGIN
+	aCALL:= pCALL;
+END;
+
+PROCEDURE TSYSOPTION.setKEY0(pKEY0:Integer);
+BEGIN
+	aKEY0:= pKEY0;
+END;
+
+PROCEDURE TSYSOPTION.setPARENTID(pPARENTID:Integer);
+BEGIN
+	aPARENTID:= pPARENTID;
+END;
+
+PROCEDURE TSYSOPTION.setISLEVEL(pISLEVEL:Integer);
+BEGIN
+	aISLEVEL:= pISLEVEL;
+END;
+
+PROCEDURE TSYSOPTION.setAPPID(pAPPID:Integer);
+BEGIN
+	aAPPID:= pAPPID;
+END;
+
+PROCEDURE TSYSOPTION.setCREATED(pCREATED:TDateTime);
+BEGIN
+	aCREATED:= pCREATED;
+END;
+
+PROCEDURE TSYSOPTION.setUCREATED(pUCREATED:Integer);
+BEGIN
+	aUCREATED:= pUCREATED;
+END;
+
+PROCEDURE TSYSOPTION.setUPDATED(pUPDATED:TDateTime);
+BEGIN
+	aUPDATED:= pUPDATED;
+END;
+
+PROCEDURE TSYSOPTION.setUUPDATED(pUUPDATED:Integer);
+BEGIN
+	aUUPDATED:= pUUPDATED;
+END;
+
+PROCEDURE TSYSOPTION.setCONCURRENCY(pCONCURRENCY:Integer);
+BEGIN
+	aCONCURRENCY:= pCONCURRENCY;
+END;
+
+PROCEDURE TSYSOPTION.setSTATUS(pSTATUS:String);
+BEGIN
+	aSTATUS:= pSTATUS;
+END;
+
+
+FUNCTION TSYSOPTION.getID	:Integer;
+BEGIN
+	RESULT := aID;
+END;
+
+FUNCTION TSYSOPTION.getDESCRIPTION	:String;
+BEGIN
+	RESULT := aDESCRIPTION;
+END;
+
+FUNCTION TSYSOPTION.getCALL	:String;
+BEGIN
+	RESULT := aCALL;
+END;
+
+FUNCTION TSYSOPTION.getKEY0	:Integer;
+BEGIN
+	RESULT := aKEY0;
+END;
+
+FUNCTION TSYSOPTION.getPARENTID	:Integer;
+BEGIN
+	RESULT := aPARENTID;
+END;
+
+FUNCTION TSYSOPTION.getISLEVEL	:Integer;
+BEGIN
+	RESULT := aISLEVEL;
+END;
+
+FUNCTION TSYSOPTION.getAPPID	:Integer;
+BEGIN
+	RESULT := aAPPID;
+END;
+
+FUNCTION TSYSOPTION.getCREATED	:TDateTime;
+BEGIN
+	RESULT := aCREATED;
+END;
+
+FUNCTION TSYSOPTION.getUCREATED	:Integer;
+BEGIN
+	RESULT := aUCREATED;
+END;
+
+FUNCTION TSYSOPTION.getUPDATED	:TDateTime;
+BEGIN
+	RESULT := aUPDATED;
+END;
+
+FUNCTION TSYSOPTION.getUUPDATED	:Integer;
+BEGIN
+	RESULT := aUUPDATED;
+END;
+
+FUNCTION TSYSOPTION.getCONCURRENCY	:Integer;
+BEGIN
+	RESULT := aCONCURRENCY;
+END;
+
+FUNCTION TSYSOPTION.getSTATUS	:String;
+BEGIN
+	RESULT := aSTATUS;
+END;
+
+
+function TSYSOPTION.toList(ClientDS: TAstaClientDataSet): TList;
+var  item : PSYSOPTION;
+begin
+  RESULT := TList.Create;
+	IF NOT ClientDS.Active THEN EXIT;
+
+  ClientDS.First;
+  while not ClientDS.Eof do
+  begin
+    new(item);
+    item^ := TSYSOPTION.Create;
+
+    item.ID          := clientDS.FieldByName('ID').AsInteger;
+    item.DESCRIPTION := clientDS.FieldByName('DESCRIPTION').AsString;
+    item.CALL        := clientDS.FieldByName('CALL').AsString;
+    item.KEY0        := clientDS.FieldByName('KEY0').AsInteger;
+    item.PARENTID    := clientDS.FieldByName('PARENT').AsInteger;
+    item.ISLEVEL     := clientDS.FieldByName('ISLEVEL').AsInteger;
+    item.APPID       := clientDS.FieldByName('APP_ID').AsInteger;
+    item.CREATED     := clientDS.FieldByName('CREATED').AsDateTime;
+    item.UCREATED    := clientDS.FieldByName('UCREATED_ID').AsInteger;
+    item.UPDATED     := clientDS.FieldByName('UPDATED').AsDateTime;
+    item.UUPDATED    := clientDS.FieldByName('UUPDATED_ID').AsInteger;
+    item.CONCURRENCY := clientDS.FieldByName('CONCURRENCY').AsInteger;
+    item.STATUS      := clientDS.FieldByName('STATUS').AsString;
+
+    RESULT.Add(item);
+    ClientDS.Next;
+  end;
+
+end;
+
+END.
+

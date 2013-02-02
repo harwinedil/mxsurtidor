@@ -1,0 +1,501 @@
+unit UfrmSysPerson;
+
+interface
+
+uses
+	Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+	Dialogs, UfrmBase1, DB, AstaDrv2, AstaClientDataset, ImgList, ComCtrls,
+	ToolWin, TFlatTitlebarUnit, SUIDBCtrls, ExtCtrls, TFlatSpeedButtonUnit,
+  Mask, TFlatMaskEditUnit, TFlatGroupBoxUnit,
+	RXSwitch, Buttons, ExtDlgs,TFlatComboBoxUnit, AstaUtil, AstaDBtools,
+	StdCtrls, TFlatEditUnit,DBCtrls,
+	UGralUtilidades,
+	UConstantes,
+	UclasGEnperson,
+	Uclassecurity_mxuser, frxClass, frxDBSet
+	;
+
+type
+	TfrmSysPerson = class(TfrmBase1)
+		Label6: TLabel;
+		Label8: TLabel;
+		qReport: TAstaClientDataSet;
+		oImage: TOpenPictureDialog;
+    lcaption1: TFlatTitlebar;
+    qFoto: TAstaClientDataSet;
+    Panel2: TPanel;
+    Label2: TLabel;
+    Documento: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label1: TLabel;         
+    Label5: TLabel;
+    Label7: TLabel;
+    Label9: TLabel;
+    Label10: TLabel;
+    Label11: TLabel;
+    Label12: TLabel;
+    Label20: TLabel;
+    Label21: TLabel;
+    Label22: TLabel;
+    bFoto: TSpeedButton;
+    cFoto: TImage;
+    Bevel1: TBevel;
+    cLASTNAME1: TFlatEdit;
+    cID: TFlatEdit;
+    cDOCUMENT: TFlatEdit;
+    cLASTNAME2: TFlatEdit;
+    cNAME: TFlatEdit;
+    cBIRTHDAY: TFlatMaskEdit;
+    cNIT: TFlatEdit;
+    cDATA0: TFlatEdit;
+    bHabilitado: TRxSwitch;
+    cSEX: TFlatComboBox;
+    cDOCID: TFlatComboBox;
+    cEXPID: TFlatComboBox;
+    cPAISID: TFlatComboBox;
+    cOCUPACIONID: TFlatComboBox;
+    Panel3: TPanel;
+    Label13: TLabel;
+    Label14: TLabel;
+    Label15: TLabel;
+    Label16: TLabel;
+    Label17: TLabel;
+    Label18: TLabel;
+    lMastercontact: TLabel;
+    cADDRESS: TFlatEdit;
+    cPHONE: TFlatEdit;
+    cEMAIL: TFlatEdit;
+    cPOSTCODE: TFlatEdit;
+    cWEBSITE: TFlatEdit;
+    cMASTERCONTACT: TFlatEdit;
+    report: TfrxReport;
+    rdataset: TfrxDBDataset;
+		procedure cLastname1Exit(Sender: TObject);
+		procedure suiDBNavigator1Click(Sender: TObject; Button: TNavigateBtn);
+		procedure bFotoClick(Sender: TObject);
+    procedure cIDExit(Sender: TObject);
+    procedure cMASTERCONTACTExit(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
+	private
+			registro : TGENPERSON;
+  protected
+
+	public
+			procedure init;		override;
+			procedure NewR;		override;
+			procedure Save;		override;
+			procedure Delete; override;
+			procedure QBE;		override;
+			procedure Print;	override;
+			procedure loadConfig; override;
+			procedure freeAll;   override;
+			procedure updateData; override;
+			function   isDeletable : boolean;
+			procedure  showRegistro;
+			procedure  loadRegistro;
+			procedure  findID ;
+			function   isGUIOK:boolean;
+			PROCEDURE  findMaster(ID:string);
+			procedure  fetchPhoto;
+			procedure  savePhoto; 
+	end;
+
+var
+	frmSysPerson: TfrmSysPerson;
+
+implementation
+uses UfrmMAIN, StrUtils;
+{$R *.dfm}
+
+{ TfrmSysUser }
+
+procedure TfrmSysPerson.Delete;
+begin
+	inherited;
+	if (not isDeletable) or (transaction=tAdd) then
+	begin
+			 showmsg(frmMAIN.getLabel(mNoPuedeEliminar));
+			 Exit;
+	end;
+
+	try
+			if registro.save(cds,tDelete) = cTrue then
+			begin
+				NewR;
+				showmsg(frmMAIN.getLabel(mRecordDelete));
+			end;
+
+
+	except on e:Exception do
+		begin
+					Application.MessageBox( Pchar(frmMAIN.getLabel(mErrorTransacc)+EOL+e.Message),Pchar(frmMAIN.getLabel(capError)), MB_ICONSTOP);
+					showmsg(frmMAIN.getLabel(mNOSupportTransaction));
+		end;
+	end;
+end;
+
+procedure TfrmSysPerson.freeAll;
+begin
+	inherited;
+	FreeAndNil(registro);
+end;
+
+procedure TfrmSysPerson.init;
+begin
+	inherited;
+	registro := TGENPERSON.Create;
+	transaction := tAdd;
+	updateData;
+
+	cBIRTHDAY.Text := DateToStr(Now);
+
+end;
+
+procedure TfrmSysPerson.loadConfig;
+begin
+	inherited;
+  bFoto.Caption       := frmMAIN.getLabel(bFoto.Caption);
+  bHabilitado.Caption := frmMAIN.getLabel(bHabilitado.Caption);
+  lcaption1.Caption   := frmMAIN.getLabel(lcaption1.Caption);
+end;
+
+procedure TfrmSysPerson.NewR;
+begin
+	inherited;
+	registro.init;
+	registro.initDataSet(cds);
+	transaction := tAdd;
+
+  cBIRTHDAY.Text := DateToStr(Now);
+	cFoto.Picture := NIL;
+  lMastercontact.Caption := '';
+end;
+
+procedure TfrmSysPerson.Print;
+begin
+	inherited;
+  qReport.Close;
+  qReport.ParamByName('company').AsInteger := Guser.company_id;
+  qReport.Open;
+  qReport.SortDataSetByFieldNames(['lastname1','lastname2','name'],[false,false,false]);
+  report.LoadFromFile('rPerson.fr3');
+  report.ShowReport(true);
+end;
+
+procedure TfrmSysPerson.QBE;
+begin
+	inherited;
+	registro.init;
+
+//	registro.DESCRIPTION     	:= cDescription.Text;
+	////////////////////////////company id solo si no es super//////////////
+		registro.ID				 := trim(cID.Text);
+		registro.COMPANYID := GUser.COMPANY_ID;
+		registro.DOCUMENT	 := trim(cDOCUMENT.Text);
+		registro.LASTNAME1 := cLASTNAME1.Text;
+		registro.LASTNAME2 := cLASTNAME2.Text;
+		registro.NAME			 := cNAME.Text;
+		registro.ADDRESS	 := cADDRESS.Text;
+		registro.PHONE			:= cPHONE.Text;
+		registro.EMAIL			:= cEMAIL.Text;
+		registro.MASTERCONTACT := cMASTERCONTACT.Text;
+		registro.POSTCODE		:= cPOSTCODE.Text;
+		registro.WEBSITE		:= cWEBSITE.Text;
+	////////////////////////////////////////////////////////////
+
+	try
+			registro.QBE(cds);
+
+			if cds.RecordCount = 0 then
+			begin
+					showmsg(frmMAIN.getLabel(mRecordNOFound));
+					transaction := tAdd;
+			end
+			else if cds.RecordCount = 1 then
+			begin
+					showmsg(frmMAIN.getLabel(mRecordFound));
+					transaction := tUpdate;
+			end
+			else begin
+					showmsg(frmMAIN.getLabel(mRecordsFound)+IntToStr(cds.RecordCount));
+					transaction := tUpdate;
+			end;
+
+			cds.Last;
+			registro.fromClientDataSet(cds);
+			showRegistro;
+      cDOCID.SetFocus;
+
+	except on e:Exception do
+		begin
+					Application.MessageBox( Pchar(frmMAIN.getLabel(mErrorTransacc)+EOL+e.Message),Pchar(frmMAIN.getLabel(capError)), MB_ICONSTOP);
+					showmsg(frmMAIN.getLabel(mNOSupportTransaction));
+		end;
+	end;
+
+end;
+
+procedure TfrmSysPerson.Save;
+begin
+	inherited;
+
+	if (not isFullRequired) OR (not isGUIOK) then Exit;
+
+	try
+			loadRegistro;
+
+			if registro.save(cds,transaction ) = cTrue then
+			begin
+					//guardar la imagen
+          savePhoto;
+					showmsg(frmMAIN.getLabel(mSuccess));
+			end;
+
+	except on e:Exception do
+		begin
+					Application.MessageBox( Pchar(frmMAIN.getLabel(mErrorTransacc)+EOL+e.Message),Pchar(frmMAIN.getLabel(capError)), MB_ICONSTOP);
+					showmsg(frmMAIN.getLabel(mNOSupportTransaction));
+		end;
+	end;
+
+end;
+
+function TfrmSysPerson.isDeletable: boolean;
+begin
+		 RESULT := registro.ID <> '';
+end;
+
+
+procedure TfrmSysPerson.loadRegistro;
+begin
+	 if transaction=tAdd then
+			 registro.init;
+
+		registro.fromGUI(self);
+		/////////////////////company///////////////////////
+		if cDOCID.Text='' then
+			registro.DOCID  := pSINDATO
+		else
+      registro.DOCID := frmMAIN.getParamID(tDocumento,cDOCID.Text);
+
+		if cEXPID.Text='' then
+			registro.EXPID  := pSINDATO
+		else
+       registro.EXPID := frmMAIN.getParamID(tDocumento,cEXPID.Text);
+
+		if cPAISID.Text='' then
+			registro.PAISID := pSINDATO
+		else
+      registro.PAISID := frmMAIN.getParamID(tPais,cPAISID.Text);
+
+		if cOCUPACIONID.Text='' then
+			registro.OCUPATIONID := pSINDATO
+		else
+      registro.OCUPATIONID := frmMAIN.getParamID(tOcupacion,cOCUPACIONID.Text);
+
+		registro.COMPANYID :=  GUser.COMPANY_ID;
+		registro.STATUS		 := IfThen(bHabilitado.StateOn,'1','0');
+		/////////////////////////////////////////////////////
+end;
+
+procedure TfrmSysPerson.showRegistro;
+begin
+    lMastercontact.Caption := '';
+		registro.toGUI(self);
+		cDOCID.ItemIndex     :=  cDOCID.Items.IndexOf(frmMAIN.getParamKEY0(registro.DOCID));
+    cExpid.ItemIndex     :=  cEXPID.Items.IndexOf(frmMAIN.getParamKEY0(registro.EXPID));
+		cPAISID.ItemIndex    :=  cPAISID.Items.IndexOf(frmMAIN.getParamKEY0(registro.PAISID));
+		cOCUPACIONID.ItemIndex:= cOCUPACIONID.Items.IndexOf(frmMAIN.getParamKEY0(registro.OCUPATIONID));
+		bHabilitado.StateOn  := registro.STATUS = eActivo;
+		findMaster(registro.MASTERCONTACT);
+		cFoto.Picture := NIL;
+		fetchPhoto;
+end;
+
+procedure TfrmSysPerson.findID;
+begin
+		 transaction := tAdd;
+
+		 if cID.Text='' then exit;
+
+		 registro.init;
+		 registro.id := cID.Text;
+//		 registro.COMPANYID := GUser.COMPANYID;
+
+	try
+			registro.QBE(cds);
+			if cds.RecordCount > 0 then
+			begin
+				cds.First;
+				registro.fromClientDataSet(cds);
+				transaction := tUpdate;
+				showRegistro;
+			end;
+
+	except on e:Exception do
+		begin
+					Application.MessageBox( Pchar(frmMAIN.getLabel( mErrorTransacc)+EOL+e.Message),Pchar(frmMAIN.getLabel(capError)), MB_ICONSTOP);
+					showmsg(frmMAIN.getLabel(mNOSupportTransaction));
+		end;
+	end;
+end;
+
+procedure TfrmSysPerson.cLastname1Exit(Sender: TObject);
+begin
+		inherited;
+		findID;
+end;
+
+procedure TfrmSysPerson.suiDBNavigator1Click(Sender: TObject;
+	Button: TNavigateBtn);
+begin
+	inherited;
+	if not cds.Active then exit;
+
+	registro.fromClientDataSet(cds);
+	showRegistro;
+	transaction := tUpdate;
+end;
+
+procedure TfrmSysPerson.updateData;
+begin
+	inherited;
+
+  cDOCID.Items     := frmMAIN.getParamList(tDocumento);
+  cDOCID.ItemIndex := 0;
+
+  cEXPID.Items     := frmMAIN.getParamList(tCiudad);
+  cEXPID.ItemIndex := 0;
+
+  cPAISID.Items    := frmMAIN.getParamList(tPais);
+  cPAISID.ItemIndex:= 0;
+
+  cOCUPACIONID.Items:= frmMAIN.getParamList(tOcupacion);
+  cOCUPACIONID.ItemIndex:=0;
+end;
+
+procedure TfrmSysPerson.bFotoClick(Sender: TObject);
+begin
+	if not oImage.Execute then exit;
+
+	cFOTO.Picture := NIL;
+	cFOTO.Picture.LoadFromFile(oImage.FileName);
+end;
+
+function TfrmSysPerson.isGUIOK: boolean;
+begin
+			RESULT := FALSE;
+
+			//validar claves iguales y que sean del minimo permitido
+			IF (cLASTNAME1.Text = '') and (cLASTNAME2.Text='') then
+			begin
+					 showmsg(frmMAIN.getLabel(mIngresar1Apellido));
+					 cLASTNAME1.SetFocus;
+					 Exit;
+			end;
+
+			if not utils.esfechaValida(cBIRTHDAY.Text) then
+			begin
+					 showmsg(frmMAIN.getLabel(mFechaNOValida));
+					 cBIRTHDAY.SetFocus;
+					 Exit;
+			end;
+
+		RESULT := TRUE;
+end;
+
+procedure TfrmSysPerson.cIDExit(Sender: TObject);
+begin
+	findID;
+end;
+
+procedure TfrmSysPerson.findMaster(ID:string);
+var  aux : TGENPERSON;
+		 qAux : TAstaClientDataSet;
+begin
+    if ID = '' then EXIT;
+    
+		aux := TGENPERSON.Create;
+		qAux := TAstaClientDataSet.Create(self);
+		qAUX.AstaClientSocket := cds.AstaClientSocket;
+
+		try
+		aux.ID := ID;
+		aux.QBE(qAux);
+		aux.fromClientDataSet(qAux);
+		lMastercontact.Caption := aux.getNameLong;
+		finally
+				 FreeAndNil(aux);
+				 FreeAndNil(qAux);
+		end;
+end;
+
+procedure TfrmSysPerson.cMASTERCONTACTExit(Sender: TObject);
+begin
+	if cMASTERCONTACT.Text='' then exit;
+     findMaster(cMASTERCONTACT.Text);
+end;
+
+procedure TfrmSysPerson.fetchPhoto;
+var s :string;
+begin
+{ cFoto.Picture.Bitmap.FreeImage;
+ cFoto.Picture := NIL;
+
+// Pass the table, the field name & a SQL String
+ S:=qFoto.FetchBlobString('general_person_photo','photo','Where person_id='+
+	 #39+registro.ID+#39);
+ //new string to stream requires AstaUtil in the uses
+ if S <> '' then
+	 cFoto.Picture.Bitmap.LoadFromSTream(NewStringToStream(s));
+ }
+end;
+
+procedure TfrmSysPerson.savePhoto;
+var  stream : TMemoryStream;
+foto:string;
+begin
+{
+  stream := TMemoryStream.Create;
+	try
+	cfoto.Picture.Bitmap.SaveToStream(stream);
+	foto := StreamToString(stream);
+
+  qFoto.Close;
+  qFoto.SQL.Clear;
+  qFoto.SQL.Add('insert into general_person_photo values(:id,:foto)');
+  qFoto.ParamByName('id').AsString := registro.ID;
+  qFoto.ParamByName('foto').AsString := foto;
+  qFoto.ExecSQLTransaction;
+
+	with qFoto do begin
+		Close;
+		SQL.Clear;
+		SQL.Add('SELECT person_ID,PHOTO FROM general_person_photo where person_id=:id');
+		ParamByName('id').AsString := registro.ID;
+		Open;
+		SetEditMode(['person_id'], 'general_person_photo', UpdateMethod);
+		Edit;
+	end;
+
+		qFoto.SendStringAsBlobToServer('general_person_photo','photo','where person_id='+
+				 #39+registro.ID+#39,foto);
+		qFoto.Post;
+
+		finally
+				 FreeAndNil(stream);
+		end;
+ }
+end;
+
+procedure TfrmSysPerson.FormActivate(Sender: TObject);
+begin
+  inherited;
+  cID.SetFocus;
+end;
+
+initialization
+  RegisterClass(TfrmSysPerson);
+
+end.

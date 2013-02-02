@@ -1,0 +1,420 @@
+unit UfrmSysUser;
+
+interface
+
+uses
+	Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+	Dialogs, UfrmBase1, DB, AstaDrv2, AstaClientDataset, ImgList, ComCtrls,
+	ToolWin, TFlatTitlebarUnit, SUIDBCtrls, ExtCtrls, TFlatSpeedButtonUnit,
+	StdCtrls, TFlatEditUnit,DBCtrls,TFlatMemoUnit,Buttons, RXSwitch,
+	UGralUtilidades,
+	UConstantes,
+	UclasSYSUSER,
+	UfrmIntroDobleList,
+	UfrmBuscar,
+	UclasGenPerson
+	;
+
+type
+  TfrmSysUser = class(TfrmBase1)
+		cLogin: TFlatEdit;
+		Label1: TLabel;
+    Label2: TLabel;
+    cPass: TFlatEdit;
+		cRetype: TFlatEdit;
+		Label3: TLabel;
+		cCONTACTID: TFlatEdit;
+    cDescription: TFlatEdit;
+		Label6: TLabel;
+		Label7: TLabel;
+		Label8: TLabel;
+    cCompanyid: TsuiDBLookupComboBox;
+    qCompany: TAstaClientDataSet;
+    dsCompany: TDataSource;
+    qReport: TAstaClientDataSet;
+    cRols: TFlatMemo;
+    qRol: TAstaClientDataSet;
+    bContact: TSpeedButton;
+    bRoles: TSpeedButton;
+		bHabilitado: TRxSwitch;
+    bLogueado: TRxSwitch;
+		procedure cLogKeyPress(Sender: TObject; var Key: Char);
+    procedure cLoginExit(Sender: TObject);
+    procedure suiDBNavigator1Click(Sender: TObject; Button: TNavigateBtn);
+    procedure navClick(Sender: TObject; Button: TNavigateBtn);
+    procedure bRolesClick(Sender: TObject);
+    procedure bContactClick(Sender: TObject);
+    procedure cCONTACTIDExit(Sender: TObject);
+	private
+			registro : TSYSUSER;
+	public
+			procedure init;		override;
+			procedure New;		override;
+			procedure Save;		override;
+			procedure Delete; override;
+			procedure QBE;		override;
+			procedure Print;	override;
+			procedure loadConfig; override;
+			procedure freeAll;   override;
+			procedure updateData; override;
+			function   isDeletable : boolean;
+			procedure  showRegistro;
+			procedure  loadRegistro;
+			procedure  findID ;
+			function   isGUIOK:boolean;
+			PROCEDURE  findContact(ID:string);
+	end;
+
+var
+	frmSysUser: TfrmSysUser;
+
+implementation
+uses UfrmMAIN, StrUtils;
+{$R *.dfm}
+
+{ TfrmSysUser }
+
+procedure TfrmSysUser.Delete;
+begin
+	inherited;
+	if (not isDeletable) or (transaction=tAdd) then
+	begin
+			 showmsg(frmMAIN.getLabel(mNoPuedeEliminar));
+			 Exit;
+	end;
+
+	try
+			if registro.save(cds,tDelete) = cTrue then
+			begin
+				New;
+				showmsg(frmMAIN.getLabel(mRecordDelete));
+			end;
+
+	except on e:Exception do
+		begin
+					Application.MessageBox( Pchar(frmMAIN.getLabel(mErrorTransacc)+EOL+e.Message),Pchar(frmMAIN.getLabel(capError)), MB_ICONSTOP);
+					showmsg(frmMAIN.getLabel(mNOSupportTransaction));
+		end;
+	end;
+end;
+
+procedure TfrmSysUser.freeAll;
+begin
+	inherited;
+	FreeAndNil(registro);
+end;
+
+procedure TfrmSysUser.init;
+begin
+	inherited;
+	registro := TSYSUSER.Create;
+	transaction := tAdd;
+	updateData;
+	cCompanyid.KeyValue := GUser.COMPANYID;
+	cCompanyid.Visible  := GUser.COMPANYID = pSuperCompany;
+end;
+
+procedure TfrmSysUser.loadConfig;
+begin
+	inherited;
+  bHabilitado.Caption := frmMAIN.getLabel(bHabilitado.Caption);
+  bLogueado.Caption   := frmMAIN.getLabel(bLogueado.Caption);
+  bContact.Caption    := frmMAIN.getLabel(bContact.Caption);
+  bRoles.Caption      := frmMAIN.getLabel(bRoles.Caption);
+end;
+
+procedure TfrmSysUser.New;
+begin
+	inherited;
+	registro.init;
+	registro.initDataSet(cds);
+	transaction := tAdd;
+	cRols.Lines.Clear;
+	cLogin.SetFocus;
+end;
+
+procedure TfrmSysUser.Print;
+begin
+	inherited;
+
+end;
+
+procedure TfrmSysUser.QBE;
+begin
+	inherited;
+	registro.init;
+	registro.LOGIN     	:= cLogin.Text;
+	registro.CONTACTID 	:= cCONTACTID.Text;
+//	registro.LOG				:= IfThen(bLogueado.StateOn,eActivo,eInactivo);
+//	registro.STATUS			:= IfThen(bHabilitado.StateOn,eActivo,eInactivo);
+
+	if integer(cCompanyid.KeyValue) <> pSuperUser then
+			registro.COMPANYID := integer(cCompanyid.KeyValue);
+	////////////////////////////////////////////////////////////
+
+	try
+			registro.QBE(cds);
+
+			if cds.RecordCount = 0 then
+			begin
+					showmsg(frmMAIN.getLabel(mRecordNOFound));
+					transaction := tAdd;
+			end
+			else if cds.RecordCount = 1 then
+			begin
+					showmsg(frmMAIN.getLabel(mRecordFound));
+					transaction := tUpdate;
+			end
+			else begin
+					showmsg(frmMAIN.getLabel(mRecordsFound)+IntToStr(cds.RecordCount));
+					transaction := tUpdate;
+			end;
+
+			cds.Last;
+			registro.fromClientDataSet(cds);
+			showRegistro;
+      cPass.SetFocus;
+
+	except on e:Exception do
+		begin
+					Application.MessageBox( Pchar(frmMAIN.getLabel(mErrorTransacc)+EOL+e.Message),Pchar(frmMAIN.getLabel(capError)), MB_ICONSTOP);
+					showmsg(frmMAIN.getLabel(mNOSupportTransaction));
+		end;
+	end;
+
+end;
+
+procedure TfrmSysUser.Save;
+//var  id : integer;
+begin
+	inherited;
+
+	if (not isFullRequired) OR (not isGUIOK) then Exit;
+
+	try
+			loadRegistro;
+
+	//solo para el caso en que se quiera cambiar al usuario de compania
+	//entonces se crea una copia nueva copia del registro
+			if (registro.exist(cds)) then
+					transaction := tUpdate
+			else
+					transaction := tAdd;
+
+			if registro.save(cds,transaction) = cTrue then
+			begin
+					showmsg(frmMAIN.getLabel(mSuccess));
+{					id := registro.ID;
+					registro.init;
+					registro.ID := id;
+					registro.QBE(cds);
+					registro.fromClientDataSet(cds);
+          showRegistro;
+}
+			end;
+
+	except on e:Exception do
+		begin
+					Application.MessageBox( Pchar(frmMAIN.getLabel(mErrorTransacc)+EOL+e.Message),Pchar(frmMAIN.getLabel(capError)), MB_ICONSTOP);
+					showmsg(frmMAIN.getLabel(mNOSupportTransaction));
+		end;
+	end;
+
+end;
+
+procedure TfrmSysUser.cLogKeyPress(Sender: TObject; var Key: Char);
+begin
+	inherited;
+	if key in ['0','1',#8] then
+	else
+		abort;
+end;
+
+function TfrmSysUser.isDeletable: boolean;
+begin
+		 RESULT := registro.ID <> 0;
+end;
+
+
+procedure TfrmSysUser.loadRegistro;
+begin
+	 if transaction=tAdd then
+			 registro.init;
+
+		registro.fromGUI(self);
+		registro.PASS := utils.GetHashElfico(cPass.Text); //encrypta password
+			////////////////////company///////////////////////
+		registro.COMPANYID :=  integer(cCompanyid.KeyValue);
+
+		//valores por defecto
+		registro.STATUS := IfThen(bHabilitado.StateOn,eActivo,eInactivo);
+		registro.LOG		:= IfThen(bLogueado.StateOn,eActivo,eInactivo);
+
+		//roles del usuario
+     registro.Rols.Clear;
+		 registro.Rols := TStringList(crols.Lines);
+
+end;
+
+procedure TfrmSysUser.showRegistro;
+begin
+   if registro.ID = 0 then exit;  
+
+		utils.formLimpiarEntradas(self);
+		registro.toGUI(self);
+		cRetype.Text := IntToStr(registro.PASS);
+		cCompanyid.KeyValue := registro.COMPANYID;
+
+		bHabilitado.StateOn := registro.STATUS = '1';
+		bLogueado.StateOn		:= registro.LOG = '1';
+
+
+		crols.Lines.Clear;
+		if qRol.Active then qRol.Active:= false;
+		qRol.ParamByName('id').AsInteger := registro.ID;
+		qRol.Open;
+
+		while not qRol.Eof do
+		begin
+					crols.Lines.Add(qRol.fieldbyname('description').AsString);
+					qRol.Next;
+		end;
+
+		findContact(registro.CONTACTID);
+end;
+
+procedure TfrmSysUser.findID;
+begin
+		 transaction := tAdd;
+		 if cLogin.Text='' then exit;
+
+		 registro.init;
+		 registro.LOGIN := cLogin.Text;
+		 registro.COMPANYID := GUser.COMPANYID;
+
+	try
+			registro.QBE(cds);
+			if cds.RecordCount > 0 then
+			begin
+				cds.First;
+				registro.fromClientDataSet(cds);
+				transaction := tUpdate;
+				showRegistro;
+			end;
+
+	except on e:Exception do
+		begin
+					Application.MessageBox( Pchar(frmMAIN.getLabel(mErrorTransacc)+EOL+e.Message),Pchar(frmMAIN.getLabel(capError)), MB_ICONSTOP);
+					showmsg(frmMAIN.getLabel(mNOSupportTransaction));
+		end;
+	end;
+end;
+
+procedure TfrmSysUser.cLoginExit(Sender: TObject);
+begin
+		inherited;
+		findID;
+end;
+
+procedure TfrmSysUser.suiDBNavigator1Click(Sender: TObject;
+	Button: TNavigateBtn);
+begin
+	inherited;
+	if not cds.Active then exit;
+
+	registro.fromClientDataSet(cds);
+	showRegistro;
+	transaction := tUpdate;
+end;
+
+procedure TfrmSysUser.updateData;
+begin
+	inherited;
+	if qCompany.Active then qCompany.Close;
+	qCompany.Open;
+
+end;
+
+
+function TfrmSysUser.isGUIOK: boolean;
+begin
+			RESULT := FALSE;
+
+			//validar claves iguales y que sean del minimo permitido
+			IF cPass.Text <> cRetype.Text then
+			begin
+					 showmsg(frmMAIN.getLabel(mConfirmPassword));
+					 cPass.SetFocus;
+					 Exit;
+			end;
+
+			IF Length(cPass.Text) < PMinPassword then
+			begin
+					 showmsg(format(frmMAIN.getLabel(mMinPassword),[PMinPassword]));
+					 cPass.SetFocus;
+					 Exit;
+			end;
+			RESULT := TRUE;
+
+end;
+
+procedure TfrmSysUser.navClick(Sender: TObject; Button: TNavigateBtn);
+begin
+	inherited;
+	registro.fromClientDataSet(cds);
+  showRegistro;
+end;
+
+procedure TfrmSysUser.bRolesClick(Sender: TObject);
+begin
+	if frmIntroDobleList = NIL then
+			frmIntroDobleList := TfrmIntroDobleList.Create(self);
+
+	frmIntroDobleList.setSeleccionados(TStringList(cRols.Lines));
+	frmIntroDobleList.init('sysROL',integer(cCompanyid.KeyValue));
+	frmIntroDobleList.msg.Caption:= 'Usuario: '+ cLogin.Text;
+
+	if frmIntroDobleList.ShowModal = mrYes then
+			cRols.Lines := frmIntroDobleList.getSeleccionados;
+end;
+
+procedure TfrmSysUser.bContactClick(Sender: TObject);
+begin
+		frmBuscar := TfrmBuscar.Create(SELF);
+		frmBuscar.init('genPerson');
+		if frmBuscar.ShowModal = mrYes then
+		begin
+				 cCONTACTID.Text := frmBuscar.ID;
+				 cDescription.Text:= frmBuscar.Descripcion;
+		end;
+
+end;
+
+procedure TfrmSysUser.cCONTACTIDExit(Sender: TObject);
+begin
+		if trim(cCONTACTID.Text) = '' then exit;
+    findContact(cCONTACTID.Text);
+end;
+
+
+procedure TfrmSysUser.findContact(ID: string);
+begin
+{		aux := TGENPERSON.Create;
+		qAux := TAstaClientDataSet.Create(self);
+		qAUX.AstaClientSocket := cds.AstaClientSocket;
+
+		try
+		aux.ID := ID;
+		aux.QBE(qAux);
+		aux.fromClientDataSet(qAux);
+		cDescription.Text := aux.getNameLong;
+		finally
+				 FreeAndNil(aux);
+				 FreeAndNil(qAux);
+		end;
+}
+end;
+
+initialization
+  RegisterClass(TfrmSysUser);
+end.
